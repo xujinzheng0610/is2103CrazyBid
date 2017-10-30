@@ -6,10 +6,16 @@
 package Entity;
 
 import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 /**
  *
@@ -22,7 +28,15 @@ public class Bid implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
+    @Temporal (TemporalType.TIMESTAMP)
+    private Date bidTime;
+    
+    @ManyToOne(cascade = {CascadeType.ALL}) 
+    private AuctionListing auctionListing;
+    
+    @ManyToOne(cascade = {CascadeType.ALL}) 
+    private Customer customer;
+    
     public Long getId() {
         return id;
     }
@@ -55,5 +69,49 @@ public class Bid implements Serializable {
     public String toString() {
         return "Entity.Bid[ id=" + id + " ]";
     }
+
+    /**
+     * @return the bidTime
+     */
+    public Date getBidTime() {
+        return bidTime;
+    }
+
+    /**
+     * @param bidTime the bidTime to set
+     */
+    public void setBidTime(Date bidTime) {
+        this.bidTime = bidTime;
+    }
+
+    /**
+     * @return the auctionListing
+     */
+    public AuctionListing getAuctionListing() {
+        return auctionListing;
+    }
+
+    /**
+     * @param auctionListing the auctionListing to set
+     */
+    public void setAuctionListing(AuctionListing auctionListing) {
+        this.auctionListing = auctionListing;
+    }
+
+    /**
+     * @return the customer
+     */
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    /**
+     * @param customer the customer to set
+     */
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
+
+
     
 }

@@ -6,6 +6,7 @@
 package ejb.session.stateless;
 
 import Entity.Staff;
+import exception.InvalidLoginCredentialException;
 import exception.StaffNotFoundException;
 import javax.ejb.Local;
 import javax.ejb.Remote;
@@ -53,4 +54,18 @@ public class staffEntityController implements staffEntityControllerRemote, staff
         }
     }
     
+    public Staff staffLogin(String username, String password) throws InvalidLoginCredentialException{
+        try{
+            Staff s = retrieveStaffByUsername(username);
+            if(s.getPassword().equals(password)){
+                return s;
+            }
+            else{
+                throw new InvalidLoginCredentialException("Username does not exist or invalid password!");
+            }
+        }
+        catch(StaffNotFoundException ex){
+            throw new InvalidLoginCredentialException("Username does not exist or invalid password!");
+        }
+    }
 }

@@ -47,11 +47,11 @@ public class Customer implements Serializable {
     @OneToMany(cascade = {CascadeType.ALL},mappedBy = "customer")
     private List<Address> addressList;
 
-    @ManyToMany(cascade = {CascadeType.ALL},mappedBy = "bidList")
-    private List<AuctionListing> auctionList;
+    @OneToMany(cascade = {CascadeType.ALL},mappedBy = "customer")
+    private List<Bid> bidList;
     
     @OneToMany(cascade = {CascadeType.ALL},mappedBy = "owner")
-    private List<AuctionListing> bidList;
+    private List<AuctionListing> productList;
     
     @OneToMany(cascade = {CascadeType.ALL},mappedBy = "customer")
     private List<CreditTransaction> topUpList;
@@ -222,32 +222,48 @@ public class Customer implements Serializable {
         this.addressList = addressList;
     }
 
-    /**
-     * @return the auctionList
-     */
-    public List<AuctionListing> getAuctionList() {
-        return auctionList;
-    }
 
-    /**
-     * @param auctionList the auctionList to set
-     */
-    public void setAuctionList(List<AuctionListing> auctionList) {
-        this.auctionList = auctionList;
-    }
 
     /**
      * @return the bidList
      */
-    public List<AuctionListing> getBidList() {
+    public List<Bid> getBidList() {
         return bidList;
     }
 
     /**
      * @param bidList the bidList to set
      */
-    public void setBidList(List<AuctionListing> bidList) {
+    public void setBidList(List<Bid> bidList) {
         this.bidList = bidList;
+    }
+
+    /**
+     * @return the topUpList
+     */
+    public List<CreditTransaction> getTopUpList() {
+        return topUpList;
+    }
+
+    /**
+     * @param topUpList the topUpList to set
+     */
+    public void setTopUpList(List<CreditTransaction> topUpList) {
+        this.topUpList = topUpList;
+    }
+
+    /**
+     * @return the productList
+     */
+    public List<AuctionListing> getProductList() {
+        return productList;
+    }
+
+    /**
+     * @param productList the productList to set
+     */
+    public void setProductList(List<AuctionListing> productList) {
+        this.productList = productList;
     }
     
 }

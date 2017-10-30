@@ -16,6 +16,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -45,8 +46,8 @@ public class AuctionListing implements Serializable {
     @Column(nullable = false)
     private Boolean status;
     
-    @ManyToMany(cascade = {CascadeType.ALL})   
-    private List<Customer> bidList;
+    @OneToMany(cascade = {CascadeType.ALL}, mappedBy = "auctionListing")   
+    private List<Bid> bidList;
     
     @ManyToOne(cascade = {CascadeType.ALL})
     private Customer owner;
@@ -188,14 +189,14 @@ public class AuctionListing implements Serializable {
     /**
      * @return the bidList
      */
-    public List<Customer> getBidList() {
+    public List<Bid> getBidList() {
         return bidList;
     }
 
     /**
      * @param bidList the bidList to set
      */
-    public void setBidList(List<Customer> bidList) {
+    public void setBidList(List<Bid> bidList) {
         this.bidList = bidList;
     }
 
