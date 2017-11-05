@@ -6,6 +6,7 @@
 package Entity;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.CascadeType;
@@ -14,7 +15,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
@@ -40,9 +40,9 @@ public class AuctionListing implements Serializable {
     private String product;
     private String productDescription;
     @Column(nullable = false, unique = true)
-    private Double startingPrice;
+    private BigDecimal startingPrice;
     @Column(nullable = false, unique = true)
-    private Double expectedPrice;
+    private BigDecimal expectedPrice;
     @Column(nullable = false)
     private Boolean status;
     
@@ -54,6 +54,24 @@ public class AuctionListing implements Serializable {
     
     @ManyToOne(cascade = {CascadeType.ALL})
     private Address address;
+
+    public AuctionListing() {
+    }
+
+    public AuctionListing(Date startDate, Date endDate, String product, String productDescription, BigDecimal startingPrice, BigDecimal expectedPrice, Boolean status, Customer owner, Address address) {
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.product = product;
+        this.productDescription = productDescription;
+        this.startingPrice = startingPrice;
+        this.expectedPrice = expectedPrice;
+        this.status = status;
+        this.owner = owner;
+        this.address = address;
+    }
+    
+    
+    
     
     public Long getId() {
         return id;
@@ -144,33 +162,7 @@ public class AuctionListing implements Serializable {
         this.productDescription = productDescription;
     }
 
-    /**
-     * @return the startingPrice
-     */
-    public Double getStartingPrice() {
-        return startingPrice;
-    }
 
-    /**
-     * @param startingPrice the startingPrice to set
-     */
-    public void setStartingPrice(Double startingPrice) {
-        this.startingPrice = startingPrice;
-    }
-
-    /**
-     * @return the expectedPrice
-     */
-    public Double getExpectedPrice() {
-        return expectedPrice;
-    }
-
-    /**
-     * @param expectedPrice the expectedPrice to set
-     */
-    public void setExpectedPrice(Double expectedPrice) {
-        this.expectedPrice = expectedPrice;
-    }
 
     /**
      * @return the status
@@ -226,6 +218,34 @@ public class AuctionListing implements Serializable {
      */
     public void setAddress(Address address) {
         this.address = address;
+    }
+
+    /**
+     * @return the startingPrice
+     */
+    public BigDecimal getStartingPrice() {
+        return startingPrice;
+    }
+
+    /**
+     * @param startingPrice the startingPrice to set
+     */
+    public void setStartingPrice(BigDecimal startingPrice) {
+        this.startingPrice = startingPrice;
+    }
+
+    /**
+     * @return the expectedPrice
+     */
+    public BigDecimal getExpectedPrice() {
+        return expectedPrice;
+    }
+
+    /**
+     * @param expectedPrice the expectedPrice to set
+     */
+    public void setExpectedPrice(BigDecimal expectedPrice) {
+        this.expectedPrice = expectedPrice;
     }
     
 }

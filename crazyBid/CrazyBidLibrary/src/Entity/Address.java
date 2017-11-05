@@ -30,11 +30,24 @@ public class Address implements Serializable {
     
     @Column(nullable = false)
     private String addressContent;
-    @ManyToOne
+    
+    @ManyToOne(cascade = {CascadeType.ALL})
     private Customer customer;
     
     @OneToMany(cascade = {CascadeType.ALL}, mappedBy = "address")
     private List<AuctionListing> productList;
+
+    public Address() {
+    }
+
+    public Address(String addressContent, Customer customer, List<AuctionListing> productList) {
+        this.addressContent = addressContent;
+        this.customer = customer;
+        this.productList = productList;
+    }
+    
+    
+    
     
     public Long getId() {
         return id;

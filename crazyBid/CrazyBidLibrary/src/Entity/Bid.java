@@ -6,8 +6,8 @@
 package Entity;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
-import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -31,11 +31,25 @@ public class Bid implements Serializable {
     @Temporal (TemporalType.TIMESTAMP)
     private Date bidTime;
     
+    private BigDecimal bidAmount;
+    
     @ManyToOne(cascade = {CascadeType.ALL}) 
     private AuctionListing auctionListing;
     
     @ManyToOne(cascade = {CascadeType.ALL}) 
     private Customer customer;
+
+    public Bid() {
+    }
+
+    public Bid(Date bidTime, BigDecimal bidAmount, AuctionListing auctionListing, Customer customer) {
+        this.bidTime = bidTime;
+        this.bidAmount = bidAmount;
+        this.auctionListing = auctionListing;
+        this.customer = customer;
+    }
+    
+    
     
     public Long getId() {
         return id;
@@ -110,6 +124,20 @@ public class Bid implements Serializable {
      */
     public void setCustomer(Customer customer) {
         this.customer = customer;
+    }
+
+    /**
+     * @return the bidAmount
+     */
+    public BigDecimal getBidAmount() {
+        return bidAmount;
+    }
+
+    /**
+     * @param bidAmount the bidAmount to set
+     */
+    public void setBidAmount(BigDecimal bidAmount) {
+        this.bidAmount = bidAmount;
     }
 
 

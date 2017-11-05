@@ -13,7 +13,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 
 /**
@@ -54,9 +53,29 @@ public class Customer implements Serializable {
     private List<AuctionListing> productList;
     
     @OneToMany(cascade = {CascadeType.ALL},mappedBy = "customer")
-    private List<CreditTransaction> topUpList;
-    
+    private List<TopUpTransaction> topUpList;
 
+    public Customer() {
+    }
+
+    public Customer(String firstName, String lastName, String userName, String password, String phoneNumber, String email, Long creditBalance, Boolean premium, List<Address> addressList, List<Bid> bidList, List<AuctionListing> productList, List<TopUpTransaction> topUpList) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.userName = userName;
+        this.password = password;
+        this.phoneNumber = phoneNumber;
+        this.email = email;
+        this.creditBalance = creditBalance;
+        this.premium = premium;
+        this.addressList = addressList;
+        this.bidList = bidList;
+        this.productList = productList;
+        this.topUpList = topUpList;
+    }
+    
+    
+    
+    
     @Override
     public int hashCode() {
         int hash = 0;
@@ -238,19 +257,7 @@ public class Customer implements Serializable {
         this.bidList = bidList;
     }
 
-    /**
-     * @return the topUpList
-     */
-    public List<CreditTransaction> getTopUpList() {
-        return topUpList;
-    }
 
-    /**
-     * @param topUpList the topUpList to set
-     */
-    public void setTopUpList(List<CreditTransaction> topUpList) {
-        this.topUpList = topUpList;
-    }
 
     /**
      * @return the productList
@@ -264,6 +271,20 @@ public class Customer implements Serializable {
      */
     public void setProductList(List<AuctionListing> productList) {
         this.productList = productList;
+    }
+
+    /**
+     * @return the topUpList
+     */
+    public List<TopUpTransaction> getTopUpList() {
+        return topUpList;
+    }
+
+    /**
+     * @param topUpList the topUpList to set
+     */
+    public void setTopUpList(List<TopUpTransaction> topUpList) {
+        this.topUpList = topUpList;
     }
     
 }

@@ -6,8 +6,8 @@
 package crazybidstaffclient;
 
 import Entity.Staff;
-import ejb.session.stateless.staffEntityControllerRemote;
-import enumeration.StaffAccessRight;
+import ejb.session.stateless.CreditPackageEntityControllerRemote;
+import ejb.session.stateless.StaffEntityControllerRemote;
 import exception.InvalidAccessRightException;
 import exception.InvalidLoginCredentialException;
 import exception.StaffNotFoundException;
@@ -19,8 +19,9 @@ import java.util.Scanner;
  */
 public class MainApp {
 
-    private staffEntityControllerRemote staffEntityControllerRemote;
-
+    private StaffEntityControllerRemote staffEntityControllerRemote;
+    private CreditPackageEntityControllerRemote creditPackageEntityControllerRemote;
+    
     private AdminOperationModule adminOperationModule;
     private SalesStaffOperationModule salesStaffOperationModule;
     private FinanceStaffOperationModule financeStaffOperationModule;
@@ -30,9 +31,13 @@ public class MainApp {
     public MainApp() {
     }
 
-    public MainApp(staffEntityControllerRemote staffEntityControllerRemote) {
+    public MainApp(StaffEntityControllerRemote staffEntityControllerRemote, CreditPackageEntityControllerRemote creditPackageEntityControllerRemote) {
         this.staffEntityControllerRemote = staffEntityControllerRemote;
+        this.creditPackageEntityControllerRemote = creditPackageEntityControllerRemote;
     }
+
+    
+    
 
     public void runApp() throws StaffNotFoundException {
 
@@ -52,9 +57,9 @@ public class MainApp {
                 if (response == 1) {
                     try {
                         doLogin();
-                        adminOperationModule = new AdminOperationModule(currentStaff);
+                        adminOperationModule = new AdminOperationModule(currentStaff, staffEntityControllerRemote);
                         salesStaffOperationModule = new SalesStaffOperationModule(currentStaff);
-                        financeStaffOperationModule = new FinanceStaffOperationModule(currentStaff);
+                        financeStaffOperationModule = new FinanceStaffOperationModule(currentStaff,creditPackageEntityControllerRemote);
 
                         menuMain();
                     } catch (InvalidLoginCredentialException ex) {
@@ -95,7 +100,7 @@ public class MainApp {
         }
     }
 
-    public void menuMain() {
+    public void menuMain() throws StaffNotFoundException {
         Scanner scanner = new Scanner(System.in);
         int response = 0;
         while (true) {
@@ -104,11 +109,12 @@ public class MainApp {
             System.out.println("1: Admin Related");
             System.out.println("2: Sales Related");
             System.out.println("3: Finance Related");
-            System.out.println("4: Logout\n");
+            System.out.println("4: Change Password");
+            System.out.println("5: Logout\n");
 
             response = 0;
 
-            while (response < 1 || response > 4) {
+            while (response < 1 || response > 5) {
                 System.out.print("> ");
                 response = scanner.nextInt();
 
@@ -131,15 +137,55 @@ public class MainApp {
                     } catch (InvalidAccessRightException ex) {
                         System.out.println("Invalid option, please try again!: " + ex.getMessage() + "\n");
                     }
+                } else if (response == 4){
+                    changePassword(currentStaff);
                 }
-                if (response == 4) {
+                if (response == 5) {
                     break;
                 }
             }
-            if (response == 4) {
+            if (response == 5) {
                     break;
             }
             
+        }
+    }
+    
+    public void changePassword( Staff currentStaff){
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("*** Crazy Bid:: Main Menu:: Change Password ***\n");
+        while(true){
+            System.out.print("Enter current password> ");
+            if(scanner.nextLine().trim().equals(currentStaff.getPassword())){
+                while(true){
+                    System.out.print("Enter new password> ");
+                    String newPassword = scanner.nextLine().trim();
+                    System.out.print("Confirm new password> ");
+                    if(scanner.nextLine().trim().equals(newPassword)){
+                        currentStaff.setPassword(newPassword);
+                        staffEntityControllerRemote.updateStaff(currentStaff);
+                        System.out.println("You have successfully changed your password to "+ currentStaff.getPassword());
+                        break;
+                    }else{
+                        System.out.println("Passwords are inconsistent! Please try again!> ");
+                        System.out.println("1: continue ");
+                        System.out.println("2: break ");
+                        int ans = scanner.nextInt();
+                        scanner.nextLine();
+                        if(ans == 2)
+                            break;
+                    }
+                }
+                break;
+            }else{
+                System.out.println("Password is incorrect! Please try again!");
+                System.out.println("1: continue ");
+                System.out.println("2: break ");
+                int ans = scanner.nextInt();
+                scanner.nextLine();
+                if(ans == 2)
+                    break;
+            }
         }
     }
 }

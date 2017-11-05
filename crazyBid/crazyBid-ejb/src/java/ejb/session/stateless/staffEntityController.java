@@ -8,6 +8,7 @@ package ejb.session.stateless;
 import Entity.Staff;
 import exception.InvalidLoginCredentialException;
 import exception.StaffNotFoundException;
+import java.util.List;
 import javax.ejb.Local;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
@@ -18,54 +19,98 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 @Stateless
-@Local( staffEntityControllerLocal.class)
-@Remote( staffEntityControllerRemote.class)
+@Local(StaffEntityControllerLocal.class)
+@Remote(StaffEntityControllerRemote.class)
 
-public class staffEntityController implements staffEntityControllerRemote, staffEntityControllerLocal {
+public class StaffEntityController implements StaffEntityControllerRemote, StaffEntityControllerLocal {
 
-    @PersistenceContext(unitName = "crazyBid-ejbPU")
+    @PersistenceContext(unitName = "CrazyBid-ejbPU")
     private EntityManager em;
+
     
+
     // Add business logic below. (Right-click in editor and choose
     // "Insert Code > Add Business Method")
     @Override
-    public Staff persistNewStaff(Staff s)
-    {
+    public Staff persistNewStaff(Staff s) {
         em.persist(s);
         em.flush();
         em.refresh(s);
-        
+
         return s;
     }
-    
+
     @Override
-    public Staff retrieveStaffByUsername (String username) throws StaffNotFoundException{
+    public Staff retrieveStaffByUsername(String username) throws StaffNotFoundException {
 
         Query query = em.createQuery("SELECT s FROM Staff s WHERE s.userName = :inUsername");
         query.setParameter("inUsername", username);
-        
-        try
-        {
-            return (Staff)query.getSingleResult();
-        }
-        catch(NoResultException | NonUniqueResultException ex)
-        {
+
+        try {
+            return (Staff) query.getSingleResult();
+        } catch (NoResultException | NonUniqueResultException ex) {
             throw new StaffNotFoundException("Staff Username " + username + " does not exist!");
         }
     }
+
+    @Override
+    public Staff retrieveStaffByStaffId(Long id) throws StaffNotFoundException {
+        Staff s = em.find(Staff.class, id);
+
+        if (s != null) {
+            return s;
+        } else {
+            throw new StaffNotFoundException("Staff ID " + id + " does not exist!");
+        }
+    }
+
+    @Override
+    public List<Staff> retrieveAllStaffs(){
+        Query query = em.createQuery("SELECT s FROM Staff s");
+        return query.getResultList();
+    }
     
-    public Staff staffLogin(String username, String password) throws InvalidLoginCredentialException{
-        try{
+    @Override
+    public Staff staffLogin(String username, String password) throws InvalidLoginCredentialException {
+        try {
             Staff s = retrieveStaffByUsername(username);
-            if(s.getPassword().equals(password)){
+            if (s.getPassword().equals(password)) {
                 return s;
-            }
-            else{
+            } else {
                 throw new InvalidLoginCredentialException("Username does not exist or invalid password!");
             }
-        }
-        catch(StaffNotFoundException ex){
+        } catch (StaffNotFoundException ex) {
             throw new InvalidLoginCredentialException("Username does not exist or invalid password!");
         }
     }
+
+    @Override
+    public void updateStaff(Staff s) {
+        em.merge(s);
+    }
+
+    @Override
+    public void deleteStaff(Long id) throws StaffNotFoundException {
+        Staff sToRemove = retrieveStaffByStaffId(id);
+        if (sToRemove != null) {
+            em.remove(sToRemove);
+        } else {
+            throw new StaffNotFoundException("Staff ID " + id + " does not exist!");
+        }
+        
+        //        Query query = entityManager.createQuery("SELECT t FROM SaleTransactionEntity t");
+//        List<SaleTransactionEntity> temp = query.getResultList();
+//
+//        System.err.println("*****************ＤＩＳＡＳＳＯＣＩＡＴＩＮＧ");
+//        for (SaleTransactionEntity a : temp) {
+//            if (a.getStaffEntity().getStaffId().equals(staffId)) {
+//                System.err.println("********* disassociated: " + a.getSaleTransactionId());
+//                a.setStaffEntity(null);
+//            }
+//        }
+        
+
+    }
+
+
 }

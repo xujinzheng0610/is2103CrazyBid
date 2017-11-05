@@ -7,7 +7,7 @@ package ejb.session.singleton;
 
 
 import Entity.Staff;
-import ejb.session.stateless.staffEntityControllerLocal;
+import ejb.session.stateless.StaffEntityControllerLocal;
 import enumeration.StaffAccessRight;
 import exception.StaffNotFoundException;
 import javax.annotation.PostConstruct;
@@ -27,7 +27,7 @@ import javax.ejb.Startup;
 public class DataInitializationSessionBean {
 
     @EJB
-    private staffEntityControllerLocal staffEntityControllerLocal;
+    private StaffEntityControllerLocal staffEntityControllerLocal;
 
     
 

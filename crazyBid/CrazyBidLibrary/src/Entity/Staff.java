@@ -49,7 +49,7 @@ public class Staff implements Serializable {
         this.accessRight = accessRight;
     }
 
-    
+       
     
     @Override
     public int hashCode() {

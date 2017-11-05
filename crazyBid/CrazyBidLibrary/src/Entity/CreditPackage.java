@@ -6,11 +6,15 @@
 package Entity;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 
 /**
  *
@@ -26,10 +30,25 @@ public class CreditPackage implements Serializable {
     @Column(length = 32, nullable = false)
     private String packageName;
     @Column(nullable = false, unique = true)
-    private double amount;
+    private BigDecimal amount;
     @Column(nullable = false)
-    private boolean status;
-    
+    private int soldAmount;
+    @Column(nullable = false)
+    private Boolean status;
+
+    @OneToMany(cascade = {CascadeType.ALL}, mappedBy = "creditPackage")
+    private List<TopUpTransaction> transactionList;
+
+    public CreditPackage() {
+    }
+
+    public CreditPackage(String packageName, BigDecimal amount, int soldAmount, List<TopUpTransaction> transactionList) {
+        this.packageName = packageName;
+        this.amount = amount;
+        this.soldAmount = soldAmount;
+        this.transactionList = transactionList;
+    }
+
     public Long getId() {
         return id;
     }
@@ -78,31 +97,59 @@ public class CreditPackage implements Serializable {
     }
 
     /**
+     * @return the transactionList
+     */
+    public List<TopUpTransaction> getTransactionList() {
+        return transactionList;
+    }
+
+    /**
+     * @param transactionList the transactionList to set
+     */
+    public void setTransactionList(List<TopUpTransaction> transactionList) {
+        this.transactionList = transactionList;
+    }
+
+    /**
+     * @return the soldAmount
+     */
+    public int getSoldAmount() {
+        return soldAmount;
+    }
+
+    /**
+     * @param soldAmount the soldAmount to set
+     */
+    public void setSoldAmount(int soldAmount) {
+        this.soldAmount = soldAmount;
+    }
+
+    /**
      * @return the amount
      */
-    public double getAmount() {
+    public BigDecimal getAmount() {
         return amount;
     }
 
     /**
      * @param amount the amount to set
      */
-    public void setAmount(double amount) {
+    public void setAmount(BigDecimal amount) {
         this.amount = amount;
     }
 
     /**
      * @return the status
      */
-    public boolean isStatus() {
+    public Boolean getStatus() {
         return status;
     }
 
     /**
      * @param status the status to set
      */
-    public void setStatus(boolean status) {
+    public void setStatus(Boolean status) {
         this.status = status;
     }
-    
+
 }

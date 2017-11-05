@@ -5,9 +5,9 @@
  */
 package crazybidstaffclient;
 
-import Entity.Staff;
-import ejb.session.stateless.staffEntityControllerRemote;
-import enumeration.StaffAccessRight;
+
+import ejb.session.stateless.CreditPackageEntityControllerRemote;
+import ejb.session.stateless.StaffEntityControllerRemote;
 import exception.StaffNotFoundException;
 import javax.ejb.EJB;
 
@@ -17,17 +17,25 @@ import javax.ejb.EJB;
  */
 public class Main {
 
+    @EJB(name = "StaffEntityControllerRemote")
+    private static StaffEntityControllerRemote staffEntityControllerRemote;
+
     @EJB
-    private static staffEntityControllerRemote staffEntityControllerRemote;
+    private static CreditPackageEntityControllerRemote creditPackageEntityControllerRemote;
+
+    
+   
+    
 
     
     
     /**
      * @param args the command line arguments
+     * @throws exception.StaffNotFoundException
      */
     public static void main(String[] args) throws StaffNotFoundException {
         // TODO code application logic here
-        MainApp mainApp = new MainApp(staffEntityControllerRemote);
+        MainApp mainApp = new MainApp(staffEntityControllerRemote, creditPackageEntityControllerRemote);
          
         mainApp.runApp();  
     }
