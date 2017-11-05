@@ -27,17 +27,11 @@ import javax.persistence.Query;
 
 public class CustomerEntityController implements CustomerEntityControllerRemote, CustomerEntityControllerLocal {
 
-<<<<<<< HEAD
     @PersistenceContext(unitName = "CrazyBid-ejbPU")
     private EntityManager em;
 
     
 
-=======
-    @PersistenceContext(unitName = "crazyBid-ejbPU")
-    private EntityManager em;
-
->>>>>>> c882bc698561fb38a8e3062760fca3ed881adf6d
     @Override
     public Customer persistNewCustomer(Customer c) {
 
@@ -48,10 +42,7 @@ public class CustomerEntityController implements CustomerEntityControllerRemote,
         return c;
     }
 
-<<<<<<< HEAD
     @Override
-=======
->>>>>>> c882bc698561fb38a8e3062760fca3ed881adf6d
     public Customer retrieveCustomerByUsername(String username) throws CustomerNotFoundException {
 
         Query query = em.createQuery("SELECT s FROM Customer s WHERE s.userName = :inUsername");
@@ -64,10 +55,7 @@ public class CustomerEntityController implements CustomerEntityControllerRemote,
         }
     }
 
-<<<<<<< HEAD
     @Override
-=======
->>>>>>> c882bc698561fb38a8e3062760fca3ed881adf6d
     public Customer customerLogin(String username, String password) throws InvalidLoginCredentialException {
         try {
             Customer c = retrieveCustomerByUsername(username);
@@ -85,9 +73,6 @@ public class CustomerEntityController implements CustomerEntityControllerRemote,
     public void updateCustomer(Customer customer) {
         em.merge(customer);
     }
-<<<<<<< HEAD
 
 
-=======
->>>>>>> c882bc698561fb38a8e3062760fca3ed881adf6d
 }

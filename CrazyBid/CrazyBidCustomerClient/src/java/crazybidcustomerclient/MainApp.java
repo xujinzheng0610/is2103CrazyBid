@@ -5,9 +5,15 @@
  */
 package crazybidcustomerclient;
 
+import Entity.Address;
+import Entity.AuctionListing;
+import Entity.Bid;
 import Entity.Customer;
+import Entity.TopUpTransaction;
 import ejb.session.stateless.CustomerEntityControllerRemote;
 import exception.InvalidLoginCredentialException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 /**
@@ -112,14 +118,18 @@ public class MainApp {
         newCustomer.setCreditBalance(0L);
         newCustomer.setPremium(false);
 
-        //Test registration
-//        newCustomer.setBidList(null);
-        newCustomer.setTopUpList(null);
-        newCustomer.setAddressList(null);
-        newCustomer.setProductList(null);
+        List<Address> addressList = new ArrayList<>();
+        List<Bid> bidList = new ArrayList<>();
+        List<AuctionListing> productList = new ArrayList<>();
+        List<TopUpTransaction> topUpList = new ArrayList<>();
+        
+        newCustomer.setAddressList(addressList);
+        newCustomer.setBidList(bidList);
+        newCustomer.setProductList(productList);
+        newCustomer.setTopUpList(topUpList);
 
         newCustomer = customerEntityControllerRemote.persistNewCustomer(newCustomer);
-        System.out.println("Registration successful!: " + newCustomer.getUserName() + "\n");
+        System.out.println("Registration successful!: " + newCustomer.getUserName()+ "\n");
     }
 
     public void menuMain() {

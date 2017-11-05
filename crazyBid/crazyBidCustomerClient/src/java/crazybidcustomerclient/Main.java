@@ -14,8 +14,10 @@ import javax.ejb.EJB;
  */
 public class Main {
 
-    @EJB
-    private static CustomerEntityControllerRemote customerEntityController;
+    @EJB(name = "CustomerEntityControllerRemote")
+    private static CustomerEntityControllerRemote customerEntityControllerRemote;
+
+    
     
     
     /**
@@ -24,7 +26,7 @@ public class Main {
     public static void main(String[] args) {
         // TODO code application logic here
         
-        MainApp mainApp = new MainApp(customerEntityController);
+        MainApp mainApp = new MainApp(customerEntityControllerRemote);
         mainApp.runApp();  
     }
     

@@ -49,7 +49,9 @@ public class CustomerProfileModule {
                     doViewCustomerProfile();
                 } else if (response == 2) {
                     doUpdateProfile(currentCustomer);
-                } else if (response == 5) {
+                } else if (response == 3) {
+                    doCreateAddress(currentCustomer);
+                }  else if (response == 5) {
                     break;
                 } else {
                     System.out.println("Invalid option, please try again!\n");
@@ -78,7 +80,6 @@ public class CustomerProfileModule {
             System.out.println("1: Update Profile");
             System.out.println("2: Back\n");
             System.out.print("> ");
-            response = scanner.nextInt();
 
             while (response < 1 || response > 2) {
                 System.out.print("> ");
@@ -144,4 +145,8 @@ public class CustomerProfileModule {
         System.out.println("Customer updated successfully!\n");
     }
 
+    
+    public void doCreateAddress(Customer customer){
+        
+    }
 }

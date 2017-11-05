@@ -45,9 +45,9 @@ public class Customer implements Serializable {
     
     @OneToMany(cascade = {CascadeType.ALL},mappedBy = "customer")
     private List<Address> addressList;
-//
-//    @OneToMany(cascade = {CascadeType.ALL},mappedBy = "customer")
-//    private List<Bid> bidList;
+
+    @OneToMany(cascade = {CascadeType.ALL},mappedBy = "customer")
+    private List<Bid> bidList;
     
     @OneToMany(cascade = {CascadeType.ALL},mappedBy = "owner")
     private List<AuctionListing> productList;
@@ -246,16 +246,16 @@ public class Customer implements Serializable {
     /**
      * @return the bidList
      */
-//    public List<Bid> getBidList() {
-//        return bidList;
-//    }
-//
-//    /**
-//     * @param bidList the bidList to set
-//     */
-//    public void setBidList(List<Bid> bidList) {
-//        this.bidList = bidList;
-//    }
+    public List<Bid> getBidList() {
+        return bidList;
+    }
+
+    /**
+     * @param bidList the bidList to set
+     */
+    public void setBidList(List<Bid> bidList) {
+        this.bidList = bidList;
+    }
 
 
 

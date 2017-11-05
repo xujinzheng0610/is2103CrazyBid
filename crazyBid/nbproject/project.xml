@@ -19,10 +19,6 @@
                     <file>${reference.CrazyBidCustomerClient.j2ee-module-car}</file>
                     <path-in-war>/</path-in-war>
                 </library>
-                <library>
-                    <file>${reference.crazyBidCustomerClient.j2ee-module-car}</file>
-                    <path-in-war>/</path-in-war>
-                </library>
             </web-module-additional-libraries>
         </data>
         <references xmlns="http://www.netbeans.org/ns/ant-project-references/1">
@@ -35,11 +31,7 @@
                 <id>dist-ear</id>
             </reference>
             <reference>
-<<<<<<< HEAD
                 <foreign-project>CrazyBidCustomerClient</foreign-project>
-=======
-                <foreign-project>crazyBidCustomerClient</foreign-project>
->>>>>>> c882bc698561fb38a8e3062760fca3ed881adf6d
                 <artifact-type>j2ee_ear_archive</artifact-type>
                 <script>build.xml</script>
                 <target>dist-ear</target>
@@ -47,11 +39,7 @@
                 <id>j2ee-module-car</id>
             </reference>
             <reference>
-<<<<<<< HEAD
                 <foreign-project>CrazyBidStaffClient</foreign-project>
-=======
-                <foreign-project>crazyBidStaffClient</foreign-project>
->>>>>>> c882bc698561fb38a8e3062760fca3ed881adf6d
                 <artifact-type>j2ee_ear_archive</artifact-type>
                 <script>build.xml</script>
                 <target>dist-ear</target>
