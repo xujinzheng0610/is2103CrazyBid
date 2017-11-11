@@ -32,16 +32,17 @@ public class AuctionListing implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Temporal (TemporalType.TIMESTAMP)
+    @Column(nullable = false)
     private Date startDate;
-    @Temporal (TemporalType.DATE)
+    @Temporal (TemporalType.TIMESTAMP)
     @Column(nullable = false)
     private Date endDate;
     @Column(length = 32, nullable = false)
     private String product;
     private String productDescription;
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private BigDecimal startingPrice;
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private BigDecimal expectedPrice;
     @Column(nullable = false)
     private Boolean status;
@@ -58,7 +59,7 @@ public class AuctionListing implements Serializable {
     public AuctionListing() {
     }
 
-    public AuctionListing(Date startDate, Date endDate, String product, String productDescription, BigDecimal startingPrice, BigDecimal expectedPrice, Boolean status, Customer owner, Address address) {
+    public AuctionListing(Date startDate, Date endDate, String product, String productDescription, BigDecimal startingPrice, BigDecimal expectedPrice, Boolean status, List<Bid> bidList, Customer owner, Address address) {
         this.startDate = startDate;
         this.endDate = endDate;
         this.product = product;
@@ -66,9 +67,12 @@ public class AuctionListing implements Serializable {
         this.startingPrice = startingPrice;
         this.expectedPrice = expectedPrice;
         this.status = status;
+        this.bidList = bidList;
         this.owner = owner;
         this.address = address;
     }
+
+    
     
     
     

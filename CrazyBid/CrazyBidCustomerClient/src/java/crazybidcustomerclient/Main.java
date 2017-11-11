@@ -5,7 +5,10 @@
  */
 package crazybidcustomerclient;
 
+import ejb.session.stateless.AddressEntityControllerRemote;
+import ejb.session.stateless.CreditPackageEntityControllerRemote;
 import ejb.session.stateless.CustomerEntityControllerRemote;
+import ejb.session.stateless.TopUpTransactionControllerRemote;
 import javax.ejb.EJB;
 
 /**
@@ -14,9 +17,19 @@ import javax.ejb.EJB;
  */
 public class Main {
 
-    @EJB(name = "CustomerEntityControllerRemote")
+    @EJB
+    private static CreditPackageEntityControllerRemote creditPackageEntityControllerRemote;
+
+    @EJB
+    private static TopUpTransactionControllerRemote topUpTransactionControllerRemote;
+
+    @EJB
+    private static AddressEntityControllerRemote addressEntityControllerRemote;
+
+    @EJB
     private static CustomerEntityControllerRemote customerEntityControllerRemote;
 
+    
     
     
     
@@ -26,7 +39,7 @@ public class Main {
     public static void main(String[] args) {
         // TODO code application logic here
         
-        MainApp mainApp = new MainApp(customerEntityControllerRemote);
+        MainApp mainApp = new MainApp(customerEntityControllerRemote, addressEntityControllerRemote, creditPackageEntityControllerRemote, topUpTransactionControllerRemote);
         mainApp.runApp();  
     }
     

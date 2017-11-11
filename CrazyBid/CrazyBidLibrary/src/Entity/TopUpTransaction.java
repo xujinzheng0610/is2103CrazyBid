@@ -45,9 +45,8 @@ public class TopUpTransaction implements Serializable {
         this.customer = customer;
         this.creditPackage = creditPackage;
     }
-    
-    
-    
+
+
     public Long getId() {
         return id;
     }

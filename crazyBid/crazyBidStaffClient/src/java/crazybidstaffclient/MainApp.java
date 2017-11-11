@@ -6,6 +6,7 @@
 package crazybidstaffclient;
 
 import Entity.Staff;
+import ejb.session.stateless.AuctionListingEntityControllerRemote;
 import ejb.session.stateless.CreditPackageEntityControllerRemote;
 import ejb.session.stateless.StaffEntityControllerRemote;
 import exception.InvalidAccessRightException;
@@ -21,6 +22,7 @@ public class MainApp {
 
     private StaffEntityControllerRemote staffEntityControllerRemote;
     private CreditPackageEntityControllerRemote creditPackageEntityControllerRemote;
+    private AuctionListingEntityControllerRemote auctionListingEntityControllerRemote;
     
     private AdminOperationModule adminOperationModule;
     private SalesStaffOperationModule salesStaffOperationModule;
@@ -31,13 +33,11 @@ public class MainApp {
     public MainApp() {
     }
 
-    public MainApp(StaffEntityControllerRemote staffEntityControllerRemote, CreditPackageEntityControllerRemote creditPackageEntityControllerRemote) {
+    public MainApp(StaffEntityControllerRemote staffEntityControllerRemote, CreditPackageEntityControllerRemote creditPackageEntityControllerRemote, AuctionListingEntityControllerRemote auctionListingEntityControllerRemote) {
         this.staffEntityControllerRemote = staffEntityControllerRemote;
         this.creditPackageEntityControllerRemote = creditPackageEntityControllerRemote;
+        this.auctionListingEntityControllerRemote = auctionListingEntityControllerRemote;
     }
-
-    
-    
 
     public void runApp() throws StaffNotFoundException {
 
@@ -58,7 +58,7 @@ public class MainApp {
                     try {
                         doLogin();
                         adminOperationModule = new AdminOperationModule(currentStaff, staffEntityControllerRemote);
-                        salesStaffOperationModule = new SalesStaffOperationModule(currentStaff);
+                        salesStaffOperationModule = new SalesStaffOperationModule(currentStaff,auctionListingEntityControllerRemote);
                         financeStaffOperationModule = new FinanceStaffOperationModule(currentStaff,creditPackageEntityControllerRemote);
 
                         menuMain();

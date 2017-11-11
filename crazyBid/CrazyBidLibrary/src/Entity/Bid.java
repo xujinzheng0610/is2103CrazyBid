@@ -48,6 +48,8 @@ public class Bid implements Serializable {
         this.auctionListing = auctionListing;
         this.customer = customer;
     }
+
+    
     
     
     

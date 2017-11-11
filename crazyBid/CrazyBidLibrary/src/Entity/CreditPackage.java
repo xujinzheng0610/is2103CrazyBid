@@ -42,10 +42,11 @@ public class CreditPackage implements Serializable {
     public CreditPackage() {
     }
 
-    public CreditPackage(String packageName, BigDecimal amount, int soldAmount, List<TopUpTransaction> transactionList) {
+    public CreditPackage(String packageName, BigDecimal amount, int soldAmount, Boolean status, List<TopUpTransaction> transactionList) {
         this.packageName = packageName;
         this.amount = amount;
         this.soldAmount = soldAmount;
+        this.status = status;
         this.transactionList = transactionList;
     }
 

@@ -6,6 +6,7 @@
 package Entity;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -38,8 +39,8 @@ public class Customer implements Serializable {
     private String phoneNumber;
     @Column(length = 32, nullable = false, unique = true)
     private String email;
-    @Column(length = 32, nullable = false)
-    private Long creditBalance;
+    @Column(nullable = false)
+    private BigDecimal creditBalance;
     @Column(nullable = false)
     private Boolean premium;
     
@@ -58,7 +59,7 @@ public class Customer implements Serializable {
     public Customer() {
     }
 
-    public Customer(String firstName, String lastName, String userName, String password, String phoneNumber, String email, Long creditBalance, Boolean premium, List<Address> addressList, List<Bid> bidList, List<AuctionListing> productList, List<TopUpTransaction> topUpList) {
+    public Customer(String firstName, String lastName, String userName, String password, String phoneNumber, String email, BigDecimal creditBalance, Boolean premium, List<Address> addressList, List<Bid> bidList, List<AuctionListing> productList, List<TopUpTransaction> topUpList) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.userName = userName;
@@ -72,10 +73,8 @@ public class Customer implements Serializable {
         this.productList = productList;
         this.topUpList = topUpList;
     }
-    
-    
-    
-    
+
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -202,14 +201,14 @@ public class Customer implements Serializable {
     /**
      * @return the creditBalance
      */
-    public Long getCreditBalance() {
+    public BigDecimal getCreditBalance() {
         return creditBalance;
     }
 
     /**
      * @param creditBalance the creditBalance to set
      */
-    public void setCreditBalance(Long creditBalance) {
+    public void setCreditBalance(BigDecimal creditBalance) {
         this.creditBalance = creditBalance;
     }
 

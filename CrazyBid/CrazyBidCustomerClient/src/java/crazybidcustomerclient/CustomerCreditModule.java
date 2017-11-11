@@ -5,25 +5,33 @@
  */
 package crazybidcustomerclient;
 
+import Entity.CreditPackage;
 import Entity.Customer;
+import Entity.TopUpTransaction;
+import ejb.session.stateless.CreditPackageEntityControllerRemote;
 import ejb.session.stateless.CustomerEntityControllerRemote;
+import ejb.session.stateless.TopUpTransactionControllerRemote;
 import exception.CustomerNotFoundException;
+import exception.PackageNotFoundException;
+import java.util.List;
 import java.util.Scanner;
 
 public class CustomerCreditModule {
 
     private Customer currentCustomer;
     private CustomerEntityControllerRemote customerEntityControllerRemote;
+    private CreditPackageEntityControllerRemote creditPackageEntityControllerRemote;
+    private TopUpTransactionControllerRemote topUpTransactionControllerRemote;
 
     public CustomerCreditModule() {
     }
 
-    public CustomerCreditModule(Customer currentCustomer, CustomerEntityControllerRemote customerEntityControllerRemote) {
+    public CustomerCreditModule(Customer currentCustomer, CustomerEntityControllerRemote customerEntityControllerRemote, CreditPackageEntityControllerRemote creditPackageEntityControllerRemote, TopUpTransactionControllerRemote topUpTransactionControllerRemote) {
         this.currentCustomer = currentCustomer;
         this.customerEntityControllerRemote = customerEntityControllerRemote;
+        this.creditPackageEntityControllerRemote = creditPackageEntityControllerRemote;
+        this.topUpTransactionControllerRemote = topUpTransactionControllerRemote;
     }
-
- 
 
     public void menuCreditModule() {
         Scanner scanner = new Scanner(System.in);
@@ -46,7 +54,7 @@ public class CustomerCreditModule {
                     doViewCreditBalance();
                 } else if (response == 2) {
                     doViewTransactionHistory();
-                } else if (response == 2) {
+                } else if (response == 3) {
                     doPurchaseCredit();
                 } else if (response == 4) {
                     break;
@@ -62,15 +70,68 @@ public class CustomerCreditModule {
     }
 
     public void doViewCreditBalance() {
-        System.out.println("view balance");
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("*** CrazyBid :: View Credit Balance ***\n");
+        try {
+            currentCustomer = customerEntityControllerRemote.retrieveCustomerByUsername(currentCustomer.getUserName());
+            System.out.println("Credit Balance: " + currentCustomer.getCreditBalance());
+            System.out.println("------------------------");
+            System.out.print("Press any key to continue...> ");
+            scanner.nextLine();
+        } catch (CustomerNotFoundException ex) {
+            System.out.println("Error occurs with info: " + ex.getMessage() + " !");
+        }
     }
 
     public void doViewTransactionHistory() {
-        System.out.println("view transaction history");
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("*** Crazy Bid :: View Transaction History ***\n");
+        try {
+            List<TopUpTransaction> tList = topUpTransactionControllerRemote.retrieveAllTransactions(currentCustomer.getCustomerId());
+            System.out.printf("%8s%40s%10s\n", "Date", "Package Name", "Amount");
+            for (TopUpTransaction t : tList) {
+                System.out.printf("%8s%40s%10s\n", t.getCreatedOn(), t.getCreditPackage().getPackageName(), t.getCreditPackage().getAmount().toString());
+            }
+            System.out.println("-----------------------------------------------------------------------------------------------------------------------------------------------");
+            System.out.print("Press any key to continue...> ");
+            scanner.nextLine();
+        } catch (CustomerNotFoundException ex) {
+            System.out.println("Error occur with Info: " + ex.getMessage() + "! ");
+        }
     }
 
     public void doPurchaseCredit() {
-        System.out.println("purchase credit");
+        Scanner scanner = new Scanner(System.in);
+
+        //display and choose credit package
+        System.out.println("*** CrazyBid :: Purchase Credit Package ***\n");
+        List<CreditPackage> cList = creditPackageEntityControllerRemote.retrieveAllCreditPackages();
+
+        System.out.printf("%20s%20s%20s\n", "PackageID", "Package Name", "Amount");
+
+        for (CreditPackage c : cList) {
+            System.out.printf("%20s%20s%20s\n", c.getId(), c.getPackageName(), c.getAmount());
+        }
+
+        System.out.println("-------------------------------------------------------------------------------------");
+
+        System.out.print("Key in the id of credit package to purchase: ");
+        Long id = scanner.nextLong();
+        try {
+            TopUpTransaction t = topUpTransactionControllerRemote.addNewTransaction(currentCustomer.getCustomerId(), id);
+            System.out.println("You have successfully purchased " + t.getCreditPackage().getAmount() + "in" + t.getCreatedOn());
+            try {
+                currentCustomer = customerEntityControllerRemote.retrieveCustomerByUsername(currentCustomer.getUserName());
+                System.out.println("Now your credit balance is " + currentCustomer.getCreditBalance().toString());
+            } catch (CustomerNotFoundException ex) {
+                System.out.println("Error occurs with info: " + ex.getMessage() + " !");
+            }
+        } catch (PackageNotFoundException | CustomerNotFoundException ex) {
+            System.out.println("error occured with info: " + ex.getMessage() + " !");
+        }
+
+        System.out.println("Credit package purchased successfully!");
 
     }
 

@@ -10,8 +10,12 @@ import Entity.AuctionListing;
 import Entity.Bid;
 import Entity.Customer;
 import Entity.TopUpTransaction;
+import ejb.session.stateless.AddressEntityControllerRemote;
+import ejb.session.stateless.CreditPackageEntityControllerRemote;
 import ejb.session.stateless.CustomerEntityControllerRemote;
+import ejb.session.stateless.TopUpTransactionControllerRemote;
 import exception.InvalidLoginCredentialException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -23,9 +27,11 @@ import java.util.Scanner;
 public class MainApp {
 
     private CustomerEntityControllerRemote customerEntityControllerRemote;
+    private AddressEntityControllerRemote addressEntityControllerRemote;
+    private CreditPackageEntityControllerRemote creditPackageEntityControllerRemote;
+    private TopUpTransactionControllerRemote topUpTransactionControllerRemote;
 
     private CustomerProfileModule customerProfileModule;
-
     private CustomerCreditModule customerCreditModule;
 
     private Customer currentCustomer;
@@ -33,9 +39,14 @@ public class MainApp {
     public MainApp() {
     }
 
-    public MainApp(CustomerEntityControllerRemote customerEntityControllerRemote) {
+    public MainApp(CustomerEntityControllerRemote customerEntityControllerRemote, AddressEntityControllerRemote addressEntityControllerRemote, CreditPackageEntityControllerRemote creditPackageEntityControllerRemote, TopUpTransactionControllerRemote topUpTransactionControllerRemote) {
         this.customerEntityControllerRemote = customerEntityControllerRemote;
+        this.addressEntityControllerRemote = addressEntityControllerRemote;
+        this.creditPackageEntityControllerRemote = creditPackageEntityControllerRemote;
+        this.topUpTransactionControllerRemote = topUpTransactionControllerRemote;
     }
+
+
 
     public void runApp() {
         Scanner scanner = new Scanner(System.in);
@@ -55,8 +66,8 @@ public class MainApp {
                 if (response == 1) {
                     try {
                         doLogin();
-                        customerProfileModule = new CustomerProfileModule(currentCustomer, customerEntityControllerRemote);
-                        customerCreditModule = new CustomerCreditModule(currentCustomer, customerEntityControllerRemote);
+                        customerProfileModule = new CustomerProfileModule(currentCustomer, customerEntityControllerRemote, addressEntityControllerRemote);
+                        customerCreditModule = new CustomerCreditModule(currentCustomer, customerEntityControllerRemote, creditPackageEntityControllerRemote, topUpTransactionControllerRemote);
                         menuMain();
                     } catch (InvalidLoginCredentialException ex) {
                     }
@@ -115,21 +126,21 @@ public class MainApp {
         newCustomer.setEmail(scanner.nextLine().trim());
         System.out.print("Enter Phone Number> ");
         newCustomer.setPhoneNumber(scanner.nextLine().trim());
-        newCustomer.setCreditBalance(0L);
+        newCustomer.setCreditBalance(BigDecimal.ZERO);
         newCustomer.setPremium(false);
 
         List<Address> addressList = new ArrayList<>();
         List<Bid> bidList = new ArrayList<>();
         List<AuctionListing> productList = new ArrayList<>();
         List<TopUpTransaction> topUpList = new ArrayList<>();
-        
+
         newCustomer.setAddressList(addressList);
         newCustomer.setBidList(bidList);
         newCustomer.setProductList(productList);
         newCustomer.setTopUpList(topUpList);
 
         newCustomer = customerEntityControllerRemote.persistNewCustomer(newCustomer);
-        System.out.println("Registration successful!: " + newCustomer.getUserName()+ "\n");
+        System.out.println("\nRegistration successful!: " + newCustomer.getUserName() + "\n");
     }
 
     public void menuMain() {
@@ -142,16 +153,7 @@ public class MainApp {
             System.out.println("2: Credit Related Operations");
             System.out.println("3: Auction Listing Related Operations");
             System.out.println("4: Logout\n");
-//            System.out.println("2: Update Customer Profile");
-//            System.out.println("3: Create Address");
-//            System.out.println("4: View Address Details"); //1:Update Address, 2:Delete Address
-//            System.out.println("5: View All Addresses");
-//            System.out.println("6: View Credit Balance");
-//            System.out.println("7: View Credit Transaction History");
-//            System.out.println("8: Purchase Credit Package");
-//            System.out.println("9: Browse All Auction Listings");
-//            System.out.println("10: View Auction Listing Details"); //1:place new bids, 2: refresh auction listing bids
-//            System.out.println("11: View Browse Won Auction Listings"); //1:Select Delivery Address for Won Auction Listing
+
 
             response = 0;
 
@@ -165,9 +167,10 @@ public class MainApp {
                     customerCreditModule.menuCreditModule();
                 } else if (response == 3) {
                     //auctionModule
-                }
-                if (response == 4) {
+                } else if (response == 4) {
                     break;
+                } else{
+                    System.out.println("Invalid Option, please try again!");
                 }
             }
             if (response == 4) {

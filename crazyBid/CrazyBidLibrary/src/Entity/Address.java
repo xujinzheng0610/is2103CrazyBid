@@ -13,6 +13,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
@@ -27,34 +28,93 @@ public class Address implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(length = 32, nullable = false)
+    private String streetAddress;
+    @Column(length = 32, nullable = false)
+    private String country;
+    @Column(length = 32, nullable = false)
+    private String city;
+    @Column(length = 32, nullable = false)
+    private String postalCode;
+    @Column(length = 32, nullable = false)
+    private String phoneNumber;
     
     @Column(nullable = false)
-    private String addressContent;
+    private Boolean status;
     
-    @ManyToOne(cascade = {CascadeType.ALL})
+    @ManyToOne
+    @JoinColumn(nullable = false)
     private Customer customer;
-    
+
     @OneToMany(cascade = {CascadeType.ALL}, mappedBy = "address")
     private List<AuctionListing> productList;
 
     public Address() {
     }
 
-    public Address(String addressContent, Customer customer, List<AuctionListing> productList) {
-        this.addressContent = addressContent;
+    public Address(String streetAddress, String country, String city, String postalCode, String phoneNumber, Boolean status, Customer customer, List<AuctionListing> productList) {
+        this.streetAddress = streetAddress;
+        this.country = country;
+        this.city = city;
+        this.postalCode = postalCode;
+        this.phoneNumber = phoneNumber;
+        this.status = status;
         this.customer = customer;
         this.productList = productList;
     }
+
+
     
     
-    
-    
+
     public Long getId() {
         return id;
     }
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getStreetAddress() {
+        return streetAddress;
+    }
+
+    public void setStreetAddress(String streetAddress) {
+        this.streetAddress = streetAddress;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+
+    public String getPostalCode() {
+        return postalCode;
+    }
+
+    public void setPostalCode(String postalCode) {
+        this.postalCode = postalCode;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 
     @Override
@@ -83,20 +143,6 @@ public class Address implements Serializable {
     }
 
     /**
-     * @return the addressContent
-     */
-    public String getAddressContent() {
-        return addressContent;
-    }
-
-    /**
-     * @param addressContent the addressContent to set
-     */
-    public void setAddressContent(String addressContent) {
-        this.addressContent = addressContent;
-    }
-
-    /**
      * @return the customer
      */
     public Customer getCustomer() {
@@ -109,8 +155,6 @@ public class Address implements Serializable {
     public void setCustomer(Customer customer) {
         this.customer = customer;
     }
-
-
 
     /**
      * @return the productList
@@ -125,5 +169,19 @@ public class Address implements Serializable {
     public void setProductList(List<AuctionListing> productList) {
         this.productList = productList;
     }
-    
+
+    /**
+     * @return the status
+     */
+    public Boolean getStatus() {
+        return status;
+    }
+
+    /**
+     * @param status the status to set
+     */
+    public void setStatus(Boolean status) {
+        this.status = status;
+    }
+
 }
