@@ -11,9 +11,11 @@ import Entity.Bid;
 import Entity.Customer;
 import Entity.TopUpTransaction;
 import ejb.session.stateless.AddressEntityControllerRemote;
+import ejb.session.stateless.AuctionListingEntityControllerRemote;
 import ejb.session.stateless.CreditPackageEntityControllerRemote;
 import ejb.session.stateless.CustomerEntityControllerRemote;
 import ejb.session.stateless.TopUpTransactionControllerRemote;
+import exception.CustomerNotFoundException;
 import exception.InvalidLoginCredentialException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -30,23 +32,24 @@ public class MainApp {
     private AddressEntityControllerRemote addressEntityControllerRemote;
     private CreditPackageEntityControllerRemote creditPackageEntityControllerRemote;
     private TopUpTransactionControllerRemote topUpTransactionControllerRemote;
+    private AuctionListingEntityControllerRemote auctionListingEntityControllerRemote;
 
     private CustomerProfileModule customerProfileModule;
     private CustomerCreditModule customerCreditModule;
+    private CustomerBidModule customerBidModule;
 
     private Customer currentCustomer;
 
     public MainApp() {
     }
 
-    public MainApp(CustomerEntityControllerRemote customerEntityControllerRemote, AddressEntityControllerRemote addressEntityControllerRemote, CreditPackageEntityControllerRemote creditPackageEntityControllerRemote, TopUpTransactionControllerRemote topUpTransactionControllerRemote) {
+    public MainApp(CustomerEntityControllerRemote customerEntityControllerRemote, AddressEntityControllerRemote addressEntityControllerRemote, CreditPackageEntityControllerRemote creditPackageEntityControllerRemote, TopUpTransactionControllerRemote topUpTransactionControllerRemote, AuctionListingEntityControllerRemote auctionListingEntityControllerRemote) {
         this.customerEntityControllerRemote = customerEntityControllerRemote;
         this.addressEntityControllerRemote = addressEntityControllerRemote;
         this.creditPackageEntityControllerRemote = creditPackageEntityControllerRemote;
         this.topUpTransactionControllerRemote = topUpTransactionControllerRemote;
+        this.auctionListingEntityControllerRemote = auctionListingEntityControllerRemote;
     }
-
-
 
     public void runApp() {
         Scanner scanner = new Scanner(System.in);
@@ -68,6 +71,7 @@ public class MainApp {
                         doLogin();
                         customerProfileModule = new CustomerProfileModule(currentCustomer, customerEntityControllerRemote, addressEntityControllerRemote);
                         customerCreditModule = new CustomerCreditModule(currentCustomer, customerEntityControllerRemote, creditPackageEntityControllerRemote, topUpTransactionControllerRemote);
+                        customerBidModule = new CustomerBidModule(currentCustomer, auctionListingEntityControllerRemote, customerEntityControllerRemote);
                         menuMain();
                     } catch (InvalidLoginCredentialException ex) {
                     }
@@ -90,11 +94,22 @@ public class MainApp {
         String username = "";
         String password = "";
 
-        System.out.println("*** CrazyBiz.com Staff System :: Login ***\n");
+        System.out.println("*** CrazyBid :: Login ***\n");
         System.out.print("Enter username> ");
         username = scanner.nextLine().trim();
+        while (username.length() == 0) {
+            System.out.println("Please enter your username!");
+            System.out.print("Enter username> ");
+            username = scanner.nextLine().trim();
+        }
         System.out.print("Enter password> ");
         password = scanner.nextLine().trim();
+
+        while (password.length() == 0) {
+            System.out.println("Please enter your password");
+            System.out.print("Enter password> ");
+            password = scanner.nextLine().trim();
+        }
 
         if (username.length() > 0 && password.length() > 0) {
             try {
@@ -112,21 +127,66 @@ public class MainApp {
     public void doRegister() {
         Scanner scanner = new Scanner(System.in);
         Customer newCustomer = new Customer();
+        String input;
 
         System.out.println("*** CrazyBid :: Membership Registration ***\n");
+
         System.out.print("Enter First Name> ");
-        newCustomer.setFirstName(scanner.nextLine().trim());
+        input = scanner.nextLine().trim();
+        newCustomer.setFirstName(input);
+
         System.out.print("Enter Last Name> ");
-        newCustomer.setLastName(scanner.nextLine().trim());
-        System.out.print("Enter Username> ");
-        newCustomer.setUserName(scanner.nextLine().trim());
+        input = scanner.nextLine().trim();
+        newCustomer.setLastName(input);
+        while (true) {
+            System.out.print("Enter Username> ");
+            input = scanner.nextLine().trim();
+            if (input.length() == 0) {
+                System.out.println("Please enter a username!");
+            } else {
+                try {
+                    Customer c = customerEntityControllerRemote.retrieveCustomerByUsername(input);
+                    System.out.println("Username is already taken! Please try again!");
+                } catch (CustomerNotFoundException ex) {
+                    newCustomer.setUserName(input);
+                    break;
+                }
+            }
+        }
+
         System.out.print("Enter Password> ");
-        newCustomer.setPassword(scanner.nextLine().trim());
-        System.out.print("Enter Email> ");
-        newCustomer.setEmail(scanner.nextLine().trim());
+        input = scanner.nextLine().trim();
+
+        while (input.length() == 0) {
+            System.out.println("Please enter a password!");
+            System.out.print("Enter Password> ");
+            input = scanner.nextLine().trim();
+        }
+
+        newCustomer.setPassword(input);
+
+        while (true) {
+            System.out.print("Enter Email> ");
+            input = scanner.nextLine().trim();
+            if (input.length() == 0) {
+                System.out.println("Please enter an email!");
+            } else {
+                try {
+                    Customer c = customerEntityControllerRemote.retrieveCustomerByEmail(input);
+                    System.out.println("Email is already taken! Please try again!");
+                } catch (CustomerNotFoundException ex) {
+                    newCustomer.setEmail(input);
+                    break;
+                }
+            }
+        }
+
         System.out.print("Enter Phone Number> ");
-        newCustomer.setPhoneNumber(scanner.nextLine().trim());
+        input = scanner.nextLine().trim();
+        newCustomer.setPhoneNumber(input);
+
         newCustomer.setCreditBalance(BigDecimal.ZERO);
+
         newCustomer.setPremium(false);
 
         List<Address> addressList = new ArrayList<>();
@@ -154,7 +214,6 @@ public class MainApp {
             System.out.println("3: Auction Listing Related Operations");
             System.out.println("4: Logout\n");
 
-
             response = 0;
 
             while (response < 1 || response > 4) {
@@ -166,10 +225,10 @@ public class MainApp {
                 } else if (response == 2) {
                     customerCreditModule.menuCreditModule();
                 } else if (response == 3) {
-                    //auctionModule
+                    customerBidModule.menuBidModule();
                 } else if (response == 4) {
                     break;
-                } else{
+                } else {
                     System.out.println("Invalid Option, please try again!");
                 }
             }

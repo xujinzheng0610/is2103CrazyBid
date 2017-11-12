@@ -9,6 +9,8 @@ import Entity.AuctionListing;
 import Entity.Bid;
 import Entity.Customer;
 import exception.AuctionListingNotFoundException;
+import exception.CustomerNotFoundException;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import javax.ejb.Local;
@@ -44,19 +46,27 @@ public class AuctionListingEntityController implements AuctionListingEntityContr
     @Override
     public List<AuctionListing> retrieveAllAuctionListings() {
         Query query = em.createQuery("SELECT a FROM AuctionListing a");
-        return query.getResultList();
+        List<AuctionListing> aList = query.getResultList();
+        for (AuctionListing a : aList) {
+            a.getBidList();
+            for(Bid b: a.getBidList()){
+                b.getBidAmount();
+                
+            }
+        }
+        return aList;
     }
 
     @Override
-    public List<AuctionListing> retrieveAuctionListingsBelowExpectedPrice(){
+    public List<AuctionListing> retrieveAuctionListingsBelowExpectedPrice() {
         Query query = em.createQuery("SELECT a FROM AuctionListing a WHERE a.owner.customerId = 0");
         List<AuctionListing> list = query.getResultList();
-        for(AuctionListing a: list){
+        for (AuctionListing a : list) {
             a.getBidList();
         }
         return list;
     }
-    
+
     @Override
     public AuctionListing retrieveAuctionListingById(Long id) throws AuctionListingNotFoundException {
         AuctionListing a = em.find(AuctionListing.class, id);
@@ -70,8 +80,11 @@ public class AuctionListingEntityController implements AuctionListingEntityContr
     }
 
     @Override
-    public void doUpdateAuctionListing(AuctionListing a) {
+    public AuctionListing doUpdateAuctionListing(AuctionListing a) {
         em.merge(a);
+        em.refresh(a);
+        a.getAddress();
+        return a;
     }
 
     @Override
@@ -109,7 +122,7 @@ public class AuctionListingEntityController implements AuctionListingEntityContr
         for (AuctionListing a : list) {
             if (a.getEndDate().compareTo(d) <= 0) {   //endDate is smaller, means pass already
                 a.setStatus(Boolean.FALSE);
-                System.out.println("product with id "+a.getId() + " has closed.");
+                System.out.println("product with id " + a.getId() + " has closed.");
                 if (a.getBidList().isEmpty()) {
                     System.out.println("nobody ever bid this product");
                     //nobody bid this product then close it is enough
@@ -118,13 +131,12 @@ public class AuctionListingEntityController implements AuctionListingEntityContr
                     List<Bid> bidList = a.getBidList();
                     Bid b = bidList.get(bidList.size() - 1);
                     Customer c = b.getCustomer();
-                    if(b.getBidAmount().compareTo(a.getExpectedPrice()) >=0){
+                    if (b.getBidAmount().compareTo(a.getExpectedPrice()) >= 0) {
                         //assign product to this customer directly
-                        System.out.println("customer " + c.getCustomerId()+ " has succcessfully bid this product");
+                        System.out.println("customer " + c.getCustomerId() + " has succcessfully bid this product");
                         c.getProductList().add(a);
                         a.setOwner(c);
-                    }
-                    else{
+                    } else {
                         //send to salesStaffs to further decide
                         System.out.println("this product will be sent to sales staff to further decide");
                         Customer systemCustomer = em.find(Customer.class, 0);
@@ -136,14 +148,73 @@ public class AuctionListingEntityController implements AuctionListingEntityContr
             }
         }
     }
-    
-    
+
     @Override
-    public void assignOwnerManully(AuctionListing a){
-        List<Bid> bidList = a.getBidList();
-        Bid b = bidList.get(bidList.size()-1);
-        Customer c = b.getCustomer();
-        a.setOwner(c);
-        c.getProductList().add(a);
+    public void assignOwnerManully(Long id) throws AuctionListingNotFoundException {
+        AuctionListing a = em.find(AuctionListing.class, id);
+        if (a != null) {
+            List<Bid> bidList = a.getBidList();
+            Bid b = bidList.get(bidList.size() - 1);
+            Customer c = b.getCustomer();
+            a.setOwner(c);
+            c.getProductList().add(a);
+        } else {
+            throw new AuctionListingNotFoundException("This Auction Listing id is invalid!");
+        }
+    }
+
+    @Override
+    public AuctionListing doPlaceNewBid(Long cId, Long aId) throws CustomerNotFoundException, AuctionListingNotFoundException {
+        Customer c = em.find(Customer.class, cId);
+        AuctionListing a = em.find(AuctionListing.class, aId);
+        if (c != null) {
+            if (a != null) {
+                Double price = 0.0;
+                List<Bid> bidList = a.getBidList();
+                if (bidList.isEmpty()) {
+                    price = a.getStartingPrice().doubleValue();
+                } else {
+                    Bid b = bidList.get(bidList.size() - 1);
+                    price = b.getBidAmount().doubleValue();
+                    Customer oldCustomer = b.getCustomer();
+                    oldCustomer.setCreditBalance(oldCustomer.getCreditBalance().add(b.getBidAmount())); //return balance to previous customer
+                }
+                if (price > 0 && price < 1) {
+                    price += 0.05;
+                } else if (price >= 1 && price < 5) {
+                    price += 0.25;
+                } else if (price >= 5 && price < 25) {
+                    price += 0.50;
+                } else if (price >= 25 && price < 100) {
+                    price += 1.00;
+                } else if (price >= 100 && price < 250) {
+                    price += 2.50;
+                } else if (price >= 250 && price < 500) {
+                    price += 5.00;
+                } else if (price >= 500 && price < 1000) {
+                    price += 10.00;
+                } else if (price >= 1000 && price < 2500) {
+                    price += 25.00;
+                } else if (price >= 2500 && price < 5000) {
+                    price += 50.00;
+                } else if (price >= 5000) {
+                    price += 100.00;
+                }
+                Bid b = new Bid(new Date(), BigDecimal.valueOf(price), a, c);
+                em.persist(b);
+                c.getBidList().add(b);
+                BigDecimal newBalance = c.getCreditBalance().subtract(BigDecimal.valueOf(price));
+                c.setCreditBalance(newBalance);
+                a.getBidList().add(b);
+                em.flush();
+                em.refresh(a);
+                a.getBidList();
+                return a;
+            } else {
+                throw new AuctionListingNotFoundException("This auction listing id is invalid!");
+            }
+        } else {
+            throw new CustomerNotFoundException("This Customer id is invalid!");
+        }
     }
 }

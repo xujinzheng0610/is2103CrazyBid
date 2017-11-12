@@ -40,21 +40,21 @@ public class SalesStaffOperationModule {
 
     public void menuSalesStaffOperation() throws InvalidAccessRightException {
         if (currentStaff.getAccessRight() != StaffAccessRight.SALES) {
-            throw new InvalidAccessRightException("You don't have SALES rights to access the sales operation module.");
+            throw new InvalidAccessRightException("You don't have SALES rights to access the sales system!");
         }
         Scanner scanner = new Scanner(System.in);
         Integer response = 0;
 
         while (true) {
-            System.out.println("*** Crazy Bid : Admin Operation ***\n");
+            System.out.println("*** Crazy Bid : Sales System ***\n");
             System.out.println("1: Create Auction Listing");
             System.out.println("2: View Auction Listing Details");
 //            System.out.println("3: Update Auction Listing");
 //            System.out.println("4: Delete Auction Listing");
             System.out.println("3: View All Auction Listings");
             System.out.println("4: View All Auction Listings with bids but below reserve price");
-            System.out.println("-----------------------");
             System.out.println("5: Back\n");
+            System.out.println("----------------------------------------------------");
             response = 0;
 
             while (response < 1 || response > 5) {
@@ -86,7 +86,7 @@ public class SalesStaffOperationModule {
         Scanner scanner = new Scanner(System.in);
         AuctionListing newA = new AuctionListing();
 
-        System.out.println("*** Crazy Bid:: Sales Operation :: Create New Auction Listing ***\n");
+        System.out.println("*** Crazy Bid:: Sales System :: Create New Auction Listing ***\n");
 
         System.out.print("Enter Product Name> ");
         newA.setProduct(scanner.nextLine().trim());
@@ -137,7 +137,7 @@ public class SalesStaffOperationModule {
         newA.setOwner(null);
         newA = auctionListingEntityControllerRemote.persistNewAuctionListing(newA);
 
-        System.out.println("New Product - " + newA.getProduct() + " with id " + newA.getId() + " created successfully!: \n");
+        System.out.println("New Product - " + newA.getProduct() + " with ID " + newA.getId() + " created successfully!: \n");
 
     }
 
@@ -145,18 +145,17 @@ public class SalesStaffOperationModule {
         Scanner scanner = new Scanner(System.in);
         Integer response = 0;
 
-        System.out.println("*** CrazyBid :: System Sales :: View Auction Listing Details ***\n");
+        System.out.println("*** CrazyBid :: Sales System :: View Auction Listing Details ***\n");
         System.out.print("Enter Auction Listing ID> ");
         Long id = scanner.nextLong();
 
         try {
             AuctionListing a = auctionListingEntityControllerRemote.retrieveAuctionListingById(id);
-            System.out.printf("%5s%10s%15s%15s%30s%30s%5s\n", "Product ID", "Product Name", "Starting Price", "Expected Price", "Start time", "End time", "Status");
-            System.out.printf("%5s%10s%15s%15s%30s%30s%5s\n", a.getId(), a.getProduct(), a.getStartingPrice().toString(),
-                    a.getExpectedPrice().toString(), a.getStartDate(), a.getEndDate(), a.getStatus().toString());
+            System.out.printf("%5s%20s%25s%25s%30s%33s%30s\n", "Product ID", "Product Name", "Starting Price", "Expected Price", "Start time", "End time", "Status");
+            System.out.printf("%5s%23s%22s%25s%43s%36s%18s\n", a.getId(), a.getProduct(), a.getStartingPrice().toString(), a.getExpectedPrice().toString(), a.getStartDate(), a.getEndDate(), a.getStatus().toString());
+            System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
 
             while (response < 1 || response > 3) {
-                System.out.println("------------------------");
                 System.out.println("1: Update Auction Listing");
                 System.out.println("2: Delete Auction Listing");
                 System.out.println("3: Back\n");
@@ -169,7 +168,7 @@ public class SalesStaffOperationModule {
                         a.getBidList();
                         doDeleteAuctionListing(a);
                     } else {
-                        System.out.println("This auction listing is disable already.");
+                        System.out.println("This auction listing is disabled already!");
                     }
                 } else if (response == 3) {
 
@@ -185,16 +184,17 @@ public class SalesStaffOperationModule {
     public void viewAuctionListings() {
         Scanner scanner = new Scanner(System.in);
 
-        System.out.println("*** Crazy Bid :: System Administration :: View All Staffs ***\n");
+        System.out.println("*** Crazy Bid :: Sales System :: View All Auction Listings ***\n");
 
         List<AuctionListing> aList = auctionListingEntityControllerRemote.retrieveAllAuctionListings();
-        System.out.printf("%5s%10s%15s%15s%30s%30s%5s\n", "Product ID", "Product Name", "Starting Price", "Expected Price", "Start time", "End time", "Status");
+        System.out.printf("%5s%20s%25s%25s%30s%33s%30s\n", "Product ID", "Product Name", "Starting Price", "Expected Price", "Start time", "End time", "Status");
 
         for (AuctionListing a : aList) {
-            System.out.printf("%5s%10s%15s%15s%30s%30s%5s\n", a.getId(), a.getProduct(), a.getStartingPrice().toString(),
+            System.out.printf("%5s%23s%22s%25s%43s%36s%18s\n", a.getId(), a.getProduct(), a.getStartingPrice().toString(),
                     a.getExpectedPrice().toString(), a.getStartDate(), a.getEndDate(), a.getStatus().toString());
         }
 
+        System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
         System.out.print("Press any key to continue...> ");
         scanner.nextLine();
     }
@@ -260,7 +260,7 @@ public class SalesStaffOperationModule {
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
             while (true) {
-                System.out.print("Enter Start Time in format (\"yyyy-MM-dd HH:mm:ss\")(blank if no change)> ");
+                System.out.print("Enter Start Time in format (\"yyyy-MM-dd HH:mm:00\")(blank if no change)> ");
                 String startDateStr = scanner.nextLine().trim();
 
                 if (startDateStr.length() > 0) {
@@ -279,7 +279,7 @@ public class SalesStaffOperationModule {
                 }
             }
             while (true) {
-                System.out.print("Enter End Time in format (\"yyyy-MM-dd HH:mm:ss\")(blank if no change)> ");
+                System.out.print("Enter End Time in format (\"yyyy-MM-dd HH:mm:00\")(blank if no change)> ");
                 String endDateStr = scanner.nextLine().trim();
 
                 if (endDateStr.length() > 0) {
@@ -297,7 +297,6 @@ public class SalesStaffOperationModule {
                     break;
                 }
             }
-
             auctionListingEntityControllerRemote.doUpdateAuctionListing(a);
             System.out.println(a.getProduct() + " has been updated successfully!");
 
@@ -307,7 +306,7 @@ public class SalesStaffOperationModule {
     public void doDeleteAuctionListing(AuctionListing a) throws AuctionListingNotFoundException {
         Scanner scanner = new Scanner(System.in);
         String input;
-        System.out.println("*** Crazy Bid :: System Sales :: View Auction Listing Details :: Delete Auction Listing ***\n");
+        System.out.println("*** Crazy Bid :: Sales System :: View Auction Listing Details :: Delete Auction Listing ***\n");
         System.out.printf("Confirm Delete Auction Listing %s (Package ID: %s) (Enter 'Y' to Delete)> ", a.getProduct(), a.getId());
         input = scanner.nextLine().trim();
         if (input.equals("Y")) {
@@ -318,17 +317,16 @@ public class SalesStaffOperationModule {
                 auctionListingEntityControllerRemote.disableAuctionListing(a.getId());
                 System.out.println("Auction Listing has been disabled successfully!\n");
             }
-
         } else {
-            System.out.println("Auction Listing NOT disabled!\n");
+            System.out.println("Auction Listing is NOT disabled!\n");
         }
 
     }
 
     public void doAssignAuctionListing() {
         Scanner scanner = new Scanner(System.in);
-        System.out.println("*** Crazy Bid :: System Sales :: View Auction Listing Below Expected Price :: Assign Bid ***\n");
-        System.out.print("Please enter the product id> ");
+        System.out.println("*** Crazy Bid :: Sales System :: View Auction Listing Below Expected Price :: Assign Bid ***\n");
+        System.out.print("Please enter the product ID> ");
         Long id = scanner.nextLong();
         try {
             AuctionListing a = auctionListingEntityControllerRemote.retrieveAuctionListingById(id);
@@ -336,7 +334,7 @@ public class SalesStaffOperationModule {
             String input = scanner.nextLine().trim();
             if (input.equals("Y")) {
                 a.getBidList();
-                auctionListingEntityControllerRemote.assignOwnerManully(a);
+                auctionListingEntityControllerRemote.assignOwnerManully(a.getId());
             } else {
                 System.out.println("Auction Listing NOT assigned!\n");
             }

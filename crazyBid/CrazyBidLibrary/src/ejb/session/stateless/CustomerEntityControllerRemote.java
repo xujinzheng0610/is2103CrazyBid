@@ -19,4 +19,5 @@ public interface CustomerEntityControllerRemote {
 
     public void updateCustomer(Customer customer);
 
+        public Customer retrieveCustomerByEmail(String email) throws CustomerNotFoundException;
 }

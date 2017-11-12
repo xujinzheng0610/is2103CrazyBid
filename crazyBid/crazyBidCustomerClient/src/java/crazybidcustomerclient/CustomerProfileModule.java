@@ -40,13 +40,14 @@ public class CustomerProfileModule {
         Integer response = 0;
 
         while (true) {
-            System.out.println("*** POS System :: Customer Profile Operation ***\n");
+            System.out.println("*** CrazyBid :: Customer Profile Operation ***\n");
             System.out.println("1: View Customer Profile");
             System.out.println("2: Update Customer Profile");
             System.out.println("3: Create Address");
             System.out.println("4: View Address Details");
             System.out.println("5: View All Addresses");
             System.out.println("6: Back\n");
+            System.out.println("------------------------------");
             response = 0;
 
             while (response < 1 || response > 6) {
@@ -71,42 +72,6 @@ public class CustomerProfileModule {
             if (response == 6) {
                 break;
             }
-        }
-    }
-
-    private void doViewCustomerProfile() {
-        Scanner scanner = new Scanner(System.in);
-        Integer response = 0;
-
-        System.out.println("*** CrazyBid :: View Customer Profile ***\n");
-        System.out.print("Enter username > ");
-        String username = currentCustomer.getUserName();
-
-        try {
-            customerEntityControllerRemote.retrieveCustomerByUsername(username);
-            System.out.printf("%8s%15s%15s%15s%15s%20s%20s%20s\n", "First Name", "Last Name", "Username", "Password", "Email", "Phone Number", "Credit Balance", "Premium Status");
-            System.out.printf("%22s%20s%12s%18s%15s%15s%18s%22s\n", currentCustomer.getFirstName(), currentCustomer.getLastName(), currentCustomer.getUserName(), currentCustomer.getPassword(), currentCustomer.getEmail(), currentCustomer.getPhoneNumber(), currentCustomer.getCreditBalance(), currentCustomer.getPremium());
-            System.out.println("-----------------------------------------------------------------------------------------------------------------------------------------------------");
-            System.out.println("1: Update Profile");
-            System.out.println("2: Back\n");
-            System.out.print("> ");
-
-            while (response < 1 || response > 2) {
-                System.out.print("> ");
-
-                response = scanner.nextInt();
-
-                if (response == 1) {
-                    doUpdateProfile(currentCustomer);
-                } else if (response == 2) {
-                    break;
-                } else {
-                    System.out.println("Invalid option, please try again!\n");
-                }
-            }
-
-        } catch (CustomerNotFoundException ex) {
-            System.out.println("Customer is not found!");
         }
     }
 
@@ -158,24 +123,54 @@ public class CustomerProfileModule {
     public void doCreateNewAddress() {
         Scanner scanner = new Scanner(System.in);
         Address newAddress = new Address();
+        String input;
 
         System.out.println("*** CrazyBid :: Add New Address ***\n");
 
-
         System.out.print("Enter Street Address> ");
-        newAddress.setStreetAddress(scanner.nextLine().trim());
+        input = scanner.nextLine().trim();
+        while (input.length() == 0) {
+            System.out.println("Please enter an address!");
+            System.out.print("Enter Street Address> ");
+            input = scanner.nextLine().trim();
+        }
+        newAddress.setStreetAddress(input);
 
         System.out.print("Enter Country> ");
-        newAddress.setCountry(scanner.nextLine().trim());
+        input = scanner.nextLine().trim();
+        while (input.length() == 0) {
+            System.out.println("Please enter a country!");
+            System.out.print("Enter Country> ");
+            input = scanner.nextLine().trim();
+        }
+        newAddress.setCountry(input);
 
         System.out.print("Enter City> ");
-        newAddress.setCity(scanner.nextLine().trim());
+        input = scanner.nextLine().trim();
+        while (input.length() == 0) {
+            System.out.println("Please enter a city!");
+            System.out.print("Enter City> ");
+            input = scanner.nextLine().trim();
+        }
+        newAddress.setCity(input);
 
         System.out.print("Enter Postal Code> ");
-        newAddress.setPostalCode(scanner.nextLine().trim());
+        input = scanner.nextLine().trim();
+        while (input.length() == 0) {
+            System.out.println("Please enter a postal code!");
+            System.out.print("Enter Postal Code> ");
+            input = scanner.nextLine().trim();
+        }
+        newAddress.setPostalCode(input);
 
         System.out.print("Enter Phone Number> ");
-        newAddress.setPhoneNumber(scanner.nextLine().trim());
+        input = scanner.nextLine().trim();
+        while (input.length() == 0) {
+            System.out.println("Please enter a phone number!");
+            System.out.print("Enter Phone Number> ");
+            input = scanner.nextLine().trim();
+        }
+        newAddress.setPhoneNumber(input);
 
         newAddress.setCustomer(currentCustomer);
         newAddress.setStatus(Boolean.TRUE);
@@ -188,20 +183,55 @@ public class CustomerProfileModule {
         System.out.println("Address added successfully!:\n");
     }
 
+    private void doViewCustomerProfile() {
+        Scanner scanner = new Scanner(System.in);
+        Integer response = 0;
+
+        System.out.println("*** CrazyBid :: View Customer Profile ***\n");
+        String username = currentCustomer.getUserName();
+
+        try {
+            customerEntityControllerRemote.retrieveCustomerByUsername(username);
+            System.out.println("");
+            System.out.printf("%10s%13s%15s%15s%15s%20s%20s%20s\n", "First Name", "Last Name", "Username", "Password", "Email", "Phone Number", "Credit Balance", "Premium Status");
+            System.out.printf("%10s%13s%15s%15s%15s%20s%20s%20s\n", currentCustomer.getFirstName(), currentCustomer.getLastName(), currentCustomer.getUserName(), currentCustomer.getPassword(), currentCustomer.getEmail(), currentCustomer.getPhoneNumber(), currentCustomer.getCreditBalance(), currentCustomer.getPremium());
+            System.out.println("-----------------------------------------------------------------------------------------------------------------------------------------------------");
+            System.out.println("1: Update Profile");
+            System.out.println("2: Back\n");
+            System.out.print("> ");
+
+            while (response < 1 || response > 2) {
+
+                response = scanner.nextInt();
+
+                if (response == 1) {
+                    doUpdateProfile(currentCustomer);
+                } else if (response == 2) {
+                    break;
+                } else {
+                    System.out.println("Invalid option, please try again!\n");
+                }
+            }
+
+        } catch (CustomerNotFoundException ex) {
+            System.out.println("Customer is not found!");
+        }
+    }
+
     public void doViewAddressDetails() {
 
         Scanner scanner = new Scanner(System.in);
         Integer response = 0;
 
         System.out.println("*** CrazyBid :: View Address Details ***\n");
-        System.out.print("Please key in address id> ");
+        System.out.print("Please key in the address ID > ");
         Long addressId = scanner.nextLong();
 
         try {
             Address a = addressEntityControllerRemote.retrieveAddressByAddressId(addressId);
-            System.out.printf("%8s%20s%20s%20s%20s%20s%5s\n", "Address Id", "Street Address", "Country", "City", "Postal Code", "Phone Number", "Status");
-            System.out.printf("%8s%20s%20s%20s%20s%20s%5s\n", a.getId(), a.getStreetAddress(), a.getCountry(), a.getCity(), a.getPostalCode(), a.getPhoneNumber(), a.getStatus().toString());
-            System.out.println("\n------------------------");
+            System.out.printf("%8s%20s%20s%20s%20s%20s%20s\n", "Address ID", "Street Address", "Country", "City", "Postal Code", "Phone Number", "Status");
+            System.out.printf("%8s%20s%20s%20s%20s%20s%20s\n", a.getId(), a.getStreetAddress(), a.getCountry(), a.getCity(), a.getPostalCode(), a.getPhoneNumber(), a.getStatus().toString());
+            System.out.println("-----------------------------------------------------------------------------------------------------------------------------------------------");
             System.out.println("1: Update Address");
             System.out.println("2: Delete Address");
             System.out.println("3: Back\n");
@@ -223,7 +253,7 @@ public class CustomerProfileModule {
             }
 
         } catch (AddressNotFoundException ex) {
-            System.out.println("Customer is not found!");
+            System.out.println("Address is not found!");
         }
 
     }
@@ -234,7 +264,6 @@ public class CustomerProfileModule {
         String input;
 
         System.out.println("*** CrazyBid :: Update Address ***\n");
-
 
         System.out.print("Enter Street Address (blank if no change)> ");
         input = scanner.nextLine().trim();
@@ -287,7 +316,7 @@ public class CustomerProfileModule {
                 System.out.println("An error has occurred while deleting Address: " + ex.getMessage() + "\n");
             }
         } else {
-            System.out.println("Address NOT deleted!\n");
+            System.out.println("Address is NOT deleted!\n");
         }
     }
 
@@ -297,14 +326,14 @@ public class CustomerProfileModule {
         System.out.println("*** Crazy Bid :: View All Addresses ***\n");
 
         List<Address> addressList = addressEntityControllerRemote.retrieveAllAddresses();
-        System.out.printf("%8s%20s%20s%20s%20s%20s%5s\n", "Address Id", "Street Address", "Country", "City", "Postal Code", "Phone Number", "Status");
+        System.out.printf("%8s%20s%20s%20s%20s%20s%20s\n", "Address ID", "Street Address", "Country", "City", "Postal Code", "Phone Number", "Status");
 
         for (Address a : addressList) {
-            System.out.printf("%8s%20s%20s%20s%20s%20s%5s\n", a.getId(), a.getStreetAddress(), a.getCountry(), a.getCity(), a.getPostalCode(), a.getPhoneNumber(), a.getStatus().toString());
+            System.out.printf("%8s%20s%20s%20s%20s%20s%20s\n", a.getId(), a.getStreetAddress(), a.getCountry(), a.getCity(), a.getPostalCode(), a.getPhoneNumber(), a.getStatus().toString());
         }
 
         System.out.println("-----------------------------------------------------------------------------------------------------------------------------------------------");
-        System.out.print("Press any key to continue...> ");
+        System.out.println("Press any key to continue...> ");
         scanner.nextLine();
     }
 }

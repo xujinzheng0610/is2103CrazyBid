@@ -116,22 +116,20 @@ public class CustomerCreditModule {
 
         System.out.println("-------------------------------------------------------------------------------------");
 
-        System.out.print("Key in the id of credit package to purchase: ");
+        System.out.print("Key in the ID of credit package to purchase: ");
         Long id = scanner.nextLong();
         try {
             TopUpTransaction t = topUpTransactionControllerRemote.addNewTransaction(currentCustomer.getCustomerId(), id);
-            System.out.println("You have successfully purchased " + t.getCreditPackage().getAmount() + "in" + t.getCreatedOn());
+            System.out.println("You have successfully purchased " + t.getCreditPackage().getAmount() + " credits on " + t.getCreatedOn());
             try {
                 currentCustomer = customerEntityControllerRemote.retrieveCustomerByUsername(currentCustomer.getUserName());
-                System.out.println("Now your credit balance is " + currentCustomer.getCreditBalance().toString());
+                System.out.println("Your current credit balance is " + currentCustomer.getCreditBalance().toString());
             } catch (CustomerNotFoundException ex) {
                 System.out.println("Error occurs with info: " + ex.getMessage() + " !");
             }
         } catch (PackageNotFoundException | CustomerNotFoundException ex) {
             System.out.println("error occured with info: " + ex.getMessage() + " !");
         }
-
-        System.out.println("Credit package purchased successfully!");
 
     }
 

@@ -7,6 +7,7 @@ package ejb.session.stateless;
 
 import Entity.AuctionListing;
 import exception.AuctionListingNotFoundException;
+import exception.CustomerNotFoundException;
 import java.util.List;
 
 
@@ -18,7 +19,7 @@ public interface AuctionListingEntityControllerLocal {
 
     public AuctionListing retrieveAuctionListingById(Long id) throws AuctionListingNotFoundException;
 
-    public void doUpdateAuctionListing(AuctionListing a);
+    public AuctionListing doUpdateAuctionListing(AuctionListing a);
 
     public void deleteAuctionListing(Long id) throws AuctionListingNotFoundException;
 
@@ -28,6 +29,8 @@ public interface AuctionListingEntityControllerLocal {
     
     public List<AuctionListing> retrieveAuctionListingsBelowExpectedPrice();
 
-    public void assignOwnerManully(AuctionListing a);
+    public void assignOwnerManully(Long id) throws AuctionListingNotFoundException;
+    
+    public AuctionListing doPlaceNewBid(Long cId, Long aId) throws CustomerNotFoundException, AuctionListingNotFoundException;
     
 }
