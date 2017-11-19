@@ -5,7 +5,6 @@
  */
 package ejb.session.stateless;
 
-import Entity.Address;
 import Entity.AuctionListing;
 import Entity.Customer;
 import exception.CustomerNotFoundException;
@@ -33,8 +32,6 @@ public class CustomerEntityController implements CustomerEntityControllerRemote,
     @PersistenceContext(unitName = "CrazyBid-ejbPU")
     private EntityManager em;
 
-    
-
     @Override
     public Customer persistNewCustomer(Customer c) {
 
@@ -58,17 +55,16 @@ public class CustomerEntityController implements CustomerEntityControllerRemote,
                 a.getAddress();
                 a.getBidList();
             }
-            for(Address a: c.getAddressList()){
-                a.getCountry();
-            }
             return c;
         } catch (NoResultException | NonUniqueResultException ex) {
             throw new CustomerNotFoundException("Customer Username " + username + " does not exist!");
         }
     }
 
-    public Customer retrieveCustomerByEmail(String email) throws CustomerNotFoundException{
-                Query query = em.createQuery("SELECT s FROM Customer s WHERE s.userName = :inEmail");
+    @Override
+    public Customer retrieveCustomerByEmail(String email) throws CustomerNotFoundException {
+
+        Query query = em.createQuery("SELECT s FROM Customer s WHERE s.email = :inEmail");
         query.setParameter("inEmail", email);
 
         try {
@@ -80,9 +76,10 @@ public class CustomerEntityController implements CustomerEntityControllerRemote,
             }
             return c;
         } catch (NoResultException | NonUniqueResultException ex) {
-            throw new CustomerNotFoundException("Customer Email " + email + " does not exist!");
+            throw new CustomerNotFoundException("Customer Username " + email + " does not exist!");
         }
     }
+
     @Override
     public Customer customerLogin(String username, String password) throws InvalidLoginCredentialException {
         try {
@@ -101,6 +98,5 @@ public class CustomerEntityController implements CustomerEntityControllerRemote,
     public void updateCustomer(Customer customer) {
         em.merge(customer);
     }
-
 
 }

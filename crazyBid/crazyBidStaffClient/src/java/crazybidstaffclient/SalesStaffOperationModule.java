@@ -54,7 +54,7 @@ public class SalesStaffOperationModule {
             System.out.println("3: View All Auction Listings");
             System.out.println("4: View All Auction Listings with bids but below reserve price");
             System.out.println("5: Back\n");
-            System.out.println("----------------------------------------------------");
+            System.out.println("---------------------------------------------------------------");
             response = 0;
 
             while (response < 1 || response > 5) {
@@ -102,7 +102,7 @@ public class SalesStaffOperationModule {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
         while (true) {
-            System.out.print("Enter Start Time in format (\"yyyy-MM-dd HH:mm:00\")> ");
+            System.out.print("Enter Start Time in format (\"yyyy-MM-dd HH:mm:00\")>" );
             String startDateStr = scanner.nextLine().trim();
             ParsePosition pos = new ParsePosition(0);
             Date startDate = formatter.parse(startDateStr, pos);
@@ -202,16 +202,16 @@ public class SalesStaffOperationModule {
     public void viewAuctionListingsBelow() {
         Scanner scanner = new Scanner(System.in);
         List<AuctionListing> aList = auctionListingEntityControllerRemote.retrieveAuctionListingsBelowExpectedPrice();
-        System.out.printf("%5s%30s%15s%15s\n", "Product ID", "Product Name", "Expected Price", "Current Price");
+        System.out.printf("%5s%15s%25s%25s\n", "Product ID", "Product Name", "Expected Price", "Current Price");
 
         for (AuctionListing a : aList) {
             List<Bid> bidList = a.getBidList();
             Bid b = bidList.get(bidList.size() - 1);
-            System.out.printf("%5s%30s%15s%15s\n", a.getId(), a.getProduct(), a.getExpectedPrice().toString(), b.getBidAmount().toString());
+            System.out.printf("%5s%15s%25s%25s\n", a.getId(), a.getProduct(), a.getExpectedPrice().toString(), b.getBidAmount().toString());
         }
         Integer response = 0;
         while (response < 1 || response > 2) {
-            System.out.println("------------------------");
+            System.out.println("--------------------------------------------------------------------------------------------------------");
             System.out.println("1: Assign Auction Listing");
             System.out.println("2: Back\n");
             System.out.print("> ");
@@ -309,7 +309,7 @@ public class SalesStaffOperationModule {
         System.out.println("*** Crazy Bid :: Sales System :: View Auction Listing Details :: Delete Auction Listing ***\n");
         System.out.printf("Confirm Delete Auction Listing %s (Package ID: %s) (Enter 'Y' to Delete)> ", a.getProduct(), a.getId());
         input = scanner.nextLine().trim();
-        if (input.equals("Y")) {
+        if (input.equals("Y") || input.equals("y")) {
             if (a.getBidList().isEmpty()) {
                 auctionListingEntityControllerRemote.deleteAuctionListing(a.getId());
                 System.out.println("Auction Listing has been deleted successfully!\n");
@@ -328,9 +328,10 @@ public class SalesStaffOperationModule {
         System.out.println("*** Crazy Bid :: Sales System :: View Auction Listing Below Expected Price :: Assign Bid ***\n");
         System.out.print("Please enter the product ID> ");
         Long id = scanner.nextLong();
+        scanner.nextLine();
         try {
             AuctionListing a = auctionListingEntityControllerRemote.retrieveAuctionListingById(id);
-            System.out.printf("Confirm Assign Product %s (Product ID: %s) (Enter 'Y' to Confirm)> ", a.getProduct(), a.getId());
+            System.out.print("Confirm Assign Product -" + a.getProduct()+ "(Product ID: "+a.getId()+") (Enter 'Y' to Confirm)> " );
             String input = scanner.nextLine().trim();
             if (input.equals("Y")) {
                 a.getBidList();

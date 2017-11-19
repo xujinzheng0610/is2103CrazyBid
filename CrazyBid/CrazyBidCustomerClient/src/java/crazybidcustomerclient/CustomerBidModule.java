@@ -12,12 +12,12 @@ import Entity.Customer;
 import ejb.session.stateless.AuctionListingEntityControllerRemote;
 import ejb.session.stateless.CustomerEntityControllerRemote;
 import exception.AuctionListingNotFoundException;
+import exception.BalanceNotEnoughException;
 import exception.CustomerNotFoundException;
 import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
 
 /**
  *
@@ -48,6 +48,7 @@ public class CustomerBidModule {
             System.out.println("2: View Auction Listing Details");
             System.out.println("3: Browse Won Auction Listing");
             System.out.println("4: Back\n");
+            System.out.println("---------------------------");
             response = 0;
 
             while (response < 1 || response > 4) {
@@ -79,7 +80,7 @@ public class CustomerBidModule {
         System.out.println("*** Crazy Bid ::Customer Bid System :: View All Auction Listings ***\n");
 
         List<AuctionListing> aList = auctionListingEntityControllerRemote.retrieveAllAuctionListings();
-        System.out.printf("%5s%10s%10s%10s%30s\n", "Product ID", "Product Name", "Starting Price", "Current Price", "End time");
+        System.out.printf("%5s%20s%25s%25s%30s\n", "Product ID", "Product Name", "Starting Price", "Current Price", "End time");
 
         for (AuctionListing a : aList) {
             if (a.getStatus()) {
@@ -92,12 +93,13 @@ public class CustomerBidModule {
                     } else {
                         currentPrice = bidList.get(bidList.size() - 1).getBidAmount().toString();
                     }
-                    System.out.printf("%5s%10s%10s%10s%30s\n", a.getId(), a.getProduct(), a.getStartingPrice().toString(),
+                    System.out.printf("%5s%20s%25s%25s%50s\n", a.getId(), a.getProduct(), a.getStartingPrice().toString(),
                             currentPrice, a.getEndDate());
+
                 }
             }
         }
-
+        System.out.println("------------------------------------------------------------------------------------------------------------------------------------");
         System.out.print("Press any key to continue...> ");
         scanner.nextLine();
 
@@ -116,7 +118,7 @@ public class CustomerBidModule {
             if (a.getStatus()) {
                 Date d = new Date();
                 if (a.getStartDate().compareTo(d) <= 0 && a.getEndDate().compareTo(d) >= 0) {
-                    System.out.printf("%5s%10s%10s%10s%15s%30s\n", "Product ID", "Product Name", "Starting Price", "Current Price", "Current Leading Customer", "End time");
+                    System.out.printf("%5s%20s%25s%25s%30s%30s\n", "Product ID", "Product Name", "Starting Price", "Current Price", "Current Leading Customer", "End time");
                     String currentPrice = "";
                     String currentLeadingBid = "Pending";
                     List<Bid> bidList = a.getBidList();
@@ -126,11 +128,12 @@ public class CustomerBidModule {
                         currentPrice = bidList.get(bidList.size() - 1).getBidAmount().toString();
                         currentLeadingBid = bidList.get(bidList.size() - 1).getCustomer().getUserName();
                     }
-                    System.out.printf("%5s%10s%10s%10s%15s%30s\n", a.getId(), a.getProduct(), a.getStartingPrice().toString(),
+                    System.out.printf("%5s%20s%25s%25s%25s%50s\n", a.getId(), a.getProduct(), a.getStartingPrice().toString(),
                             currentPrice, currentLeadingBid, a.getEndDate());
 
+                    System.out.println("--------------------------------------------------------------------------------------------------------------------------------------------------------");
+
                     while (response < 1 || response > 3) {
-                        System.out.println("------------------------");
                         System.out.println("1: Place New Bid");
                         System.out.println("2: Refresh Auction Listing Bids");
                         System.out.println("3: Back\n");
@@ -144,14 +147,14 @@ public class CustomerBidModule {
                                 try {
                                     a = auctionListingEntityControllerRemote.doPlaceNewBid(currentCustomer.getCustomerId(), a.getId());
                                     bidList = a.getBidList();
-                                    Bid b = bidList.get(bidList.size()-1);
-                                    
+                                    Bid b = bidList.get(bidList.size() - 1);
+
                                     System.out.println("You have succussfully bid this auction listing with price: " + b.getBidAmount().toString());
-                                } catch (CustomerNotFoundException | AuctionListingNotFoundException ex) {
+                                } catch (CustomerNotFoundException | AuctionListingNotFoundException | BalanceNotEnoughException ex) {
                                     System.out.println("Error occurs with Info: " + ex.getMessage() + " !");
                                 }
                             } else {
-                                System.out.println("Sorry, this auctionListing has expired!");
+                                System.out.println("This listing has expired!");
                             }
                         } else if (response == 3) {
 
@@ -160,10 +163,10 @@ public class CustomerBidModule {
                         }
                     }
                 } else {
-                    System.out.println("Sorry, this auctionListing is not available!");
+                    System.out.println("This listing is not available!");
                 }
             } else {
-                System.out.println("Sorry, this auctionListing has expired!");
+                System.out.println("This listing has expired!");
             }
         } catch (AuctionListingNotFoundException ex) {
             System.out.println("An error has occurred while retrieving auction listing: " + ex.getMessage() + "\n");
@@ -177,7 +180,7 @@ public class CustomerBidModule {
         try {
             currentCustomer = customerEntityControllerRemote.retrieveCustomerByUsername(currentCustomer.getUserName());
             List<AuctionListing> aList = currentCustomer.getProductList();
-            System.out.printf("%5s%10s%10s%80s\n", "Product ID", "Product Name", "Won Price", "Address");
+            System.out.printf("%5s%20s%25s%80s\n", "Product ID", "Product Name", "Won Price", "Address");
             for (AuctionListing a : aList) {
                 String address = "";
                 if (a.getAddress() == null) {
@@ -190,14 +193,15 @@ public class CustomerBidModule {
                 List<Bid> bidList = a.getBidList();
                 Bid b = bidList.get(bidList.size() - 1);
                 wonPrice = b.getBidAmount().toString();
-                System.out.printf("%5s%10s%10s%80s\n", a.getId(), a.getProduct(), wonPrice, address);
+                System.out.printf("%5s%20s%25s%80s\n", a.getId(), a.getProduct(), wonPrice, address);
+                System.out.println("------------------------------------------------------------------------------------------------------------------------------------");
+
             }
         } catch (CustomerNotFoundException ex) {
             System.out.println("Error occurs with Info: " + ex.getMessage() + " !");
         }
         Integer response = 0;
         while (response < 1 || response > 2) {
-            System.out.println("------------------------");
             System.out.println("1: Select Delivery Address For Won Auction Listing");
             System.out.println("2: Back\n");
             System.out.print("> ");
@@ -221,7 +225,7 @@ public class CustomerBidModule {
             if (a.getStatus()) {
                 Date d = new Date();
                 if (a.getStartDate().compareTo(d) <= 0 && a.getEndDate().compareTo(d) >= 0) {
-                    System.out.printf("%5s%10s%10s%10s%15s%30s\n", "Product ID", "Product Name", "Starting Price", "Current Price", "Current Leading Customer", "End time");
+                    System.out.printf("%5s%20s%25s%25s%30s%30s\n", "Product ID", "Product Name", "Starting Price", "Current Price", "Current Leading Customer", "End time");
                     String currentPrice = "";
                     String currentLeadingBid = "Pending";
                     List<Bid> bidList = a.getBidList();
@@ -231,7 +235,7 @@ public class CustomerBidModule {
                         currentPrice = bidList.get(bidList.size() - 1).getBidAmount().toString();
                         currentLeadingBid = bidList.get(bidList.size() - 1).getCustomer().getUserName();
                     }
-                    System.out.printf("%5s%10s%10s%10s%15s%30s\n", a.getId(), a.getProduct(), a.getStartingPrice().toString(),
+                    System.out.printf("%5s%20s%25s%25s%30s%30s\n", a.getId(), a.getProduct(), a.getStartingPrice().toString(),
                             currentPrice, currentLeadingBid, a.getEndDate());
 
                     while (response < 1 || response > 3) {
@@ -248,7 +252,7 @@ public class CustomerBidModule {
                                 a.getBidList();
                                 try {
                                     a = auctionListingEntityControllerRemote.doPlaceNewBid(currentCustomer.getCustomerId(), a.getId());
-                                } catch (CustomerNotFoundException | AuctionListingNotFoundException ex) {
+                                } catch (CustomerNotFoundException | AuctionListingNotFoundException | BalanceNotEnoughException ex) {
                                     System.out.println("Error occurs with Info: " + ex.getMessage() + " !");
                                 }
                             } else {

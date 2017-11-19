@@ -39,21 +39,21 @@ public class Customer implements Serializable {
     private String phoneNumber;
     @Column(length = 32, nullable = false, unique = true)
     private String email;
-    @Column(nullable = false)
+    @Column(nullable = false, scale = 4)
     private BigDecimal creditBalance;
     @Column(nullable = false)
     private Boolean premium;
-    
-    @OneToMany(cascade = {CascadeType.ALL},mappedBy = "customer")
+
+    @OneToMany(cascade = {CascadeType.ALL}, mappedBy = "customer")
     private List<Address> addressList;
 
-    @OneToMany(cascade = {CascadeType.ALL},mappedBy = "customer")
+    @OneToMany(cascade = {CascadeType.ALL}, mappedBy = "customer")
     private List<Bid> bidList;
-    
-    @OneToMany(cascade = {CascadeType.ALL},mappedBy = "owner")
+
+    @OneToMany(cascade = {CascadeType.ALL}, mappedBy = "owner")
     private List<AuctionListing> productList;
-    
-    @OneToMany(cascade = {CascadeType.ALL},mappedBy = "customer")
+
+    @OneToMany(cascade = {CascadeType.ALL}, mappedBy = "customer")
     private List<TopUpTransaction> topUpList;
 
     public Customer() {
@@ -73,7 +73,6 @@ public class Customer implements Serializable {
         this.productList = productList;
         this.topUpList = topUpList;
     }
-
 
     @Override
     public int hashCode() {
@@ -240,8 +239,6 @@ public class Customer implements Serializable {
         this.addressList = addressList;
     }
 
-
-
     /**
      * @return the bidList
      */
@@ -256,12 +253,13 @@ public class Customer implements Serializable {
         this.bidList = bidList;
     }
 
-
-
     /**
      * @return the productList
      */
     public List<AuctionListing> getProductList() {
+        for (AuctionListing a : productList) {
+            a.getBidList().size();
+        }
         return productList;
     }
 
@@ -285,5 +283,5 @@ public class Customer implements Serializable {
     public void setTopUpList(List<TopUpTransaction> topUpList) {
         this.topUpList = topUpList;
     }
-    
+
 }

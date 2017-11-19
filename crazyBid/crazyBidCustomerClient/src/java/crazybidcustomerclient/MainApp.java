@@ -94,7 +94,7 @@ public class MainApp {
         String username = "";
         String password = "";
 
-        System.out.println("*** CrazyBid :: Login ***\n");
+        System.out.println("*** CrazyBiz :: Login ***\n");
         System.out.print("Enter username> ");
         username = scanner.nextLine().trim();
         while (username.length() == 0) {
@@ -103,8 +103,6 @@ public class MainApp {
             username = scanner.nextLine().trim();
         }
         System.out.print("Enter password> ");
-        password = scanner.nextLine().trim();
-
         while (password.length() == 0) {
             System.out.println("Please enter your password");
             System.out.print("Enter password> ");
@@ -124,7 +122,7 @@ public class MainApp {
         }
     }
 
-    public void doRegister() {
+        public void doRegister() {
         Scanner scanner = new Scanner(System.in);
         Customer newCustomer = new Customer();
         String input;
@@ -185,7 +183,8 @@ public class MainApp {
         input = scanner.nextLine().trim();
         newCustomer.setPhoneNumber(input);
 
-        newCustomer.setCreditBalance(BigDecimal.ZERO);
+        BigDecimal balance = new BigDecimal("0.0000");
+        newCustomer.setCreditBalance(balance);
 
         newCustomer.setPremium(false);
 

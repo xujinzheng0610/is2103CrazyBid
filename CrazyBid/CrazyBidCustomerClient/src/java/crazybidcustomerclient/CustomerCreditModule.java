@@ -89,9 +89,9 @@ public class CustomerCreditModule {
         System.out.println("*** Crazy Bid :: View Transaction History ***\n");
         try {
             List<TopUpTransaction> tList = topUpTransactionControllerRemote.retrieveAllTransactions(currentCustomer.getCustomerId());
-            System.out.printf("%8s%40s%10s\n", "Date", "Package Name", "Amount");
+            System.out.printf("%8s%47s%10s\n", "Date", "Package Name", "Amount");
             for (TopUpTransaction t : tList) {
-                System.out.printf("%8s%40s%10s\n", t.getCreatedOn(), t.getCreditPackage().getPackageName(), t.getCreditPackage().getAmount().toString());
+                System.out.printf("%8s%25s%10s\n", t.getCreatedOn(), t.getCreditPackage().getPackageName(), t.getCreditPackage().getAmount().toString());
             }
             System.out.println("-----------------------------------------------------------------------------------------------------------------------------------------------");
             System.out.print("Press any key to continue...> ");
@@ -116,7 +116,7 @@ public class CustomerCreditModule {
 
         System.out.println("-------------------------------------------------------------------------------------");
 
-        System.out.print("Key in the ID of credit package to purchase: ");
+        System.out.print("Key in the ID of credit package to purchase: \n");
         Long id = scanner.nextLong();
         try {
             TopUpTransaction t = topUpTransactionControllerRemote.addNewTransaction(currentCustomer.getCustomerId(), id);
@@ -124,6 +124,7 @@ public class CustomerCreditModule {
             try {
                 currentCustomer = customerEntityControllerRemote.retrieveCustomerByUsername(currentCustomer.getUserName());
                 System.out.println("Your current credit balance is " + currentCustomer.getCreditBalance().toString());
+                System.out.println("");
             } catch (CustomerNotFoundException ex) {
                 System.out.println("Error occurs with info: " + ex.getMessage() + " !");
             }

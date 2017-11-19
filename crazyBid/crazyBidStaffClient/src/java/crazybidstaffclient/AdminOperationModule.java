@@ -139,7 +139,7 @@ public class AdminOperationModule {
 
         try {
             Staff s = staffEntityControllerRemote.retrieveStaffByStaffId(staffId);
-            System.out.printf("%8s%20s%20s%15s%20s%20s\n", "Staff ID", "First Name", "Last Name", "Access Right", "Username", "Password");
+            System.out.printf("%8s%20s%20s%20s%15s%20s\n", "Staff ID", "First Name", "Last Name", "Access Right", "Username", "Password");
             System.out.printf("%8s%20s%20s%15s%20s%20s\n", s.getStaffId().toString(), s.getFirstName(), s.getLastName(), s.getAccessRight().toString(), s.getUserName(), s.getPassword());
             System.out.println("-----------------------------------------------------------------------------------------------------------------------------------------------------");
             System.out.println("1: Update Staff");

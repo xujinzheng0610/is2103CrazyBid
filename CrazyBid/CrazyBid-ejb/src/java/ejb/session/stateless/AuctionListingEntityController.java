@@ -9,6 +9,7 @@ import Entity.AuctionListing;
 import Entity.Bid;
 import Entity.Customer;
 import exception.AuctionListingNotFoundException;
+import exception.BalanceNotEnoughException;
 import exception.CustomerNotFoundException;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -49,9 +50,9 @@ public class AuctionListingEntityController implements AuctionListingEntityContr
         List<AuctionListing> aList = query.getResultList();
         for (AuctionListing a : aList) {
             a.getBidList();
-            for(Bid b: a.getBidList()){
+            for (Bid b : a.getBidList()) {
                 b.getBidAmount();
-                
+
             }
         }
         return aList;
@@ -59,10 +60,11 @@ public class AuctionListingEntityController implements AuctionListingEntityContr
 
     @Override
     public List<AuctionListing> retrieveAuctionListingsBelowExpectedPrice() {
-        Query query = em.createQuery("SELECT a FROM AuctionListing a WHERE a.owner.customerId = 0");
+        Query query = em.createQuery("SELECT a FROM AuctionListing a WHERE a.owner.customerId = 1");
         List<AuctionListing> list = query.getResultList();
         for (AuctionListing a : list) {
             a.getBidList();
+            a.getBidList().size();
         }
         return list;
     }
@@ -75,14 +77,13 @@ public class AuctionListingEntityController implements AuctionListingEntityContr
             a.getBidList().size();
             return a;
         } else {
-            throw new AuctionListingNotFoundException("Staff ID " + id + " does not exist!");
+            throw new AuctionListingNotFoundException("Auction ID " + id + " does not exist!");
         }
     }
 
     @Override
     public AuctionListing doUpdateAuctionListing(AuctionListing a) {
         em.merge(a);
-        em.refresh(a);
         a.getAddress();
         return a;
     }
@@ -139,7 +140,8 @@ public class AuctionListingEntityController implements AuctionListingEntityContr
                     } else {
                         //send to salesStaffs to further decide
                         System.out.println("this product will be sent to sales staff to further decide");
-                        Customer systemCustomer = em.find(Customer.class, 0);
+                        Long id = Long.parseLong("1");
+                        Customer systemCustomer = em.find(Customer.class, id);
                         a.setOwner(systemCustomer);
 
                     }
@@ -164,7 +166,7 @@ public class AuctionListingEntityController implements AuctionListingEntityContr
     }
 
     @Override
-    public AuctionListing doPlaceNewBid(Long cId, Long aId) throws CustomerNotFoundException, AuctionListingNotFoundException {
+    public AuctionListing doPlaceNewBid(Long cId, Long aId) throws CustomerNotFoundException, AuctionListingNotFoundException, BalanceNotEnoughException {
         Customer c = em.find(Customer.class, cId);
         AuctionListing a = em.find(AuctionListing.class, aId);
         if (c != null) {
@@ -176,8 +178,6 @@ public class AuctionListingEntityController implements AuctionListingEntityContr
                 } else {
                     Bid b = bidList.get(bidList.size() - 1);
                     price = b.getBidAmount().doubleValue();
-                    Customer oldCustomer = b.getCustomer();
-                    oldCustomer.setCreditBalance(oldCustomer.getCreditBalance().add(b.getBidAmount())); //return balance to previous customer
                 }
                 if (price > 0 && price < 1) {
                     price += 0.05;
@@ -200,16 +200,26 @@ public class AuctionListingEntityController implements AuctionListingEntityContr
                 } else if (price >= 5000) {
                     price += 100.00;
                 }
-                Bid b = new Bid(new Date(), BigDecimal.valueOf(price), a, c);
-                em.persist(b);
-                c.getBidList().add(b);
-                BigDecimal newBalance = c.getCreditBalance().subtract(BigDecimal.valueOf(price));
-                c.setCreditBalance(newBalance);
-                a.getBidList().add(b);
-                em.flush();
-                em.refresh(a);
-                a.getBidList();
-                return a;
+                //get the new price, test whether the customer has enough money
+                if (c.getCreditBalance().compareTo(BigDecimal.valueOf(price)) < 0) {
+                    throw new BalanceNotEnoughException("This customer has not enough balance");
+                } else {
+                    Bid b = bidList.get(bidList.size() - 1);
+                    Customer oldCustomer = b.getCustomer();
+                    oldCustomer.setCreditBalance(oldCustomer.getCreditBalance().add(b.getBidAmount()));
+                    //return balance to previous customer
+
+                    Bid newBid = new Bid(new Date(), BigDecimal.valueOf(price), a, c);
+                    em.persist(newBid);
+                    c.getBidList().add(newBid);
+                    BigDecimal newBalance = c.getCreditBalance().subtract(BigDecimal.valueOf(price));
+                    c.setCreditBalance(newBalance);
+                    a.getBidList().add(newBid);
+                    a.getBidList().size();
+                    em.flush();
+                    em.refresh(a);
+                    return a;
+                }
             } else {
                 throw new AuctionListingNotFoundException("This auction listing id is invalid!");
             }
