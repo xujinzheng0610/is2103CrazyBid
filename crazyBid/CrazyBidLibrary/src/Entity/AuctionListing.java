@@ -40,9 +40,9 @@ public class AuctionListing implements Serializable {
     @Column(length = 32, nullable = false)
     private String product;
     private String productDescription;
-    @Column(nullable = false, scale = 4)
+    @Column(nullable = false, columnDefinition = "DECIMAL(18,4)")
     private BigDecimal startingPrice;
-    @Column(nullable = false, scale = 4)
+    @Column(nullable = false, columnDefinition = "DECIMAL(18,4)")
     private BigDecimal expectedPrice;
     @Column(nullable = false)
     private Boolean status;

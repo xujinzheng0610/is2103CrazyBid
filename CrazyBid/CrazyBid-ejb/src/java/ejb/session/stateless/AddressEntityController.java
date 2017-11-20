@@ -30,7 +30,7 @@ public class AddressEntityController implements AddressEntityControllerRemote, A
     private EntityManager em;
 
     @Override
-    public Address createNewAddress(Address newAddress) {
+    public Address createNewAddress(Address newAddress) { //persist new address
 
         em.persist(newAddress);
         em.flush();
@@ -43,12 +43,12 @@ public class AddressEntityController implements AddressEntityControllerRemote, A
     }
 
     @Override
-    public void updateAddress(Address newAddress) {
+    public void updateAddress(Address newAddress) { //update address
         em.merge(newAddress);
     }
 
     @Override
-    public Address retrieveAddressByAddressId(Long id) throws AddressNotFoundException {
+    public Address retrieveAddressByAddressId(Long id) throws AddressNotFoundException { //retrieve by ID
         Address a = em.find(Address.class, id);
 
         if (a != null) {
@@ -59,7 +59,7 @@ public class AddressEntityController implements AddressEntityControllerRemote, A
     }
 
     @Override
-    public void deleteAddress(Long id) throws AddressNotFoundException {
+    public void deleteAddress(Long id) throws AddressNotFoundException { // delete address
         Address aToRemove = retrieveAddressByAddressId(id);
         if (aToRemove != null) {
             if (aToRemove.getProductList().isEmpty()) {
@@ -81,7 +81,7 @@ public class AddressEntityController implements AddressEntityControllerRemote, A
     }
 
     @Override
-    public List<Address> retrieveAllAddresses() {
+    public List<Address> retrieveAllAddresses() { //retrieve all addresses
         Query query = em.createQuery("SELECT a FROM Address a");
         return query.getResultList();
     }

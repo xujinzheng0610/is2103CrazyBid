@@ -93,8 +93,16 @@ public class SalesStaffOperationModule {
         System.out.print("Enter Product Description> ");
         newA.setProductDescription(scanner.nextLine().trim());
         System.out.print("Enter Starting Price> ");
-        newA.setStartingPrice(scanner.nextBigDecimal());
+        float price = scanner.nextFloat();
+        while (price < 0) {
+            System.out.println("Please enter a valid price!");
+            System.out.print("Enter Starting Price> "); //must be greater than 0, cannot be negative value
+            price = scanner.nextFloat();
+
+        }
+        newA.setStartingPrice(BigDecimal.valueOf(price));
         scanner.nextLine();
+        
         System.out.print("Enter Expected Price> ");
         // should check the expected price, which should be equal or bigger than start price
         newA.setExpectedPrice(scanner.nextBigDecimal());
@@ -102,13 +110,13 @@ public class SalesStaffOperationModule {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
         while (true) {
-            System.out.print("Enter Start Time in format (\"yyyy-MM-dd HH:mm:00\")>" );
+            System.out.print("Enter Start Time in format (\"yyyy-MM-dd HH:mm:00\")>");
             String startDateStr = scanner.nextLine().trim();
             ParsePosition pos = new ParsePosition(0);
             Date startDate = formatter.parse(startDateStr, pos);
-            if (startDate == null) {
+            if (startDate == null) { //validate date format
                 System.out.println("the date format is invalid, please try again!");
-            } else if (startDate.compareTo(new Date()) <= 0) {
+            } else if (startDate.compareTo(new Date()) <= 0) { //validate if start date is later than current date and time
                 System.out.println("the start date should be a future time, please try again!");
             } else {
                 newA.setStartDate(startDate);
@@ -120,9 +128,9 @@ public class SalesStaffOperationModule {
             String endDateStr = scanner.nextLine().trim();
             ParsePosition pos = new ParsePosition(0);
             Date endDate = formatter.parse(endDateStr, pos);
-            if (endDate == null) {
+            if (endDate == null) { //validate date format
                 System.out.println("the date format is invalid, please try again!");
-            } else if (endDate.compareTo(newA.getStartDate()) <= 0) {
+            } else if (endDate.compareTo(newA.getStartDate()) <= 0) { //validate if end date is greater than start date
                 System.out.println("the end date is before start date, please try again!");
             } else {
                 newA.setEndDate(endDate);
@@ -167,7 +175,7 @@ public class SalesStaffOperationModule {
                     if (a.getStatus()) {
                         a.getBidList();
                         doDeleteAuctionListing(a);
-                    } else {
+                    } else { //validate if package is already disabled
                         System.out.println("This auction listing is disabled already!");
                     }
                 } else if (response == 3) {
@@ -181,7 +189,7 @@ public class SalesStaffOperationModule {
         }
     }
 
-    public void viewAuctionListings() {
+    public void viewAuctionListings() {//display all auctions listings
         Scanner scanner = new Scanner(System.in);
 
         System.out.println("*** Crazy Bid :: Sales System :: View All Auction Listings ***\n");
@@ -199,7 +207,7 @@ public class SalesStaffOperationModule {
         scanner.nextLine();
     }
 
-    public void viewAuctionListingsBelow() {
+    public void viewAuctionListingsBelow() { //to view auction listings with BIDS but BELOW reserved price.
         Scanner scanner = new Scanner(System.in);
         List<AuctionListing> aList = auctionListingEntityControllerRemote.retrieveAuctionListingsBelowExpectedPrice();
         System.out.printf("%5s%15s%25s%25s\n", "Product ID", "Product Name", "Expected Price", "Current Price");
@@ -227,7 +235,7 @@ public class SalesStaffOperationModule {
 
     }
 
-    public void doUpdateAuctionListing(AuctionListing a) {
+    public void doUpdateAuctionListing(AuctionListing a) { // to update auction listing
         Scanner scanner = new Scanner(System.in);
         if (a.getStartDate().compareTo(new Date()) <= 0) {
             System.out.println("This product has started bidding, cannot be edited!");
@@ -303,7 +311,7 @@ public class SalesStaffOperationModule {
         }
     }
 
-    public void doDeleteAuctionListing(AuctionListing a) throws AuctionListingNotFoundException {
+    public void doDeleteAuctionListing(AuctionListing a) throws AuctionListingNotFoundException { // to delete auction listing
         Scanner scanner = new Scanner(System.in);
         String input;
         System.out.println("*** Crazy Bid :: Sales System :: View Auction Listing Details :: Delete Auction Listing ***\n");
@@ -323,19 +331,21 @@ public class SalesStaffOperationModule {
 
     }
 
-    public void doAssignAuctionListing() {
+    public void doAssignAuctionListing() { // to MANUALLY assign auction listings with bids that were below reserved prices.
         Scanner scanner = new Scanner(System.in);
+        String input;
         System.out.println("*** Crazy Bid :: Sales System :: View Auction Listing Below Expected Price :: Assign Bid ***\n");
         System.out.print("Please enter the product ID> ");
         Long id = scanner.nextLong();
         scanner.nextLine();
         try {
             AuctionListing a = auctionListingEntityControllerRemote.retrieveAuctionListingById(id);
-            System.out.print("Confirm Assign Product -" + a.getProduct()+ "(Product ID: "+a.getId()+") (Enter 'Y' to Confirm)> " );
-            String input = scanner.nextLine().trim();
-            if (input.equals("Y")) {
+            System.out.print("Confirm Assign Product -" + a.getProduct() + "(Product ID: " + a.getId() + ") (Enter 'Y' to Confirm)> ");
+            input = scanner.nextLine().trim();
+            if (input.equals("Y") || input.equals("y")) {
                 a.getBidList();
                 auctionListingEntityControllerRemote.assignOwnerManully(a.getId());
+                System.out.println("You have successfully assigned the product with ID: " + a.getId());
             } else {
                 System.out.println("Auction Listing NOT assigned!\n");
             }

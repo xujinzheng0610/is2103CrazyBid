@@ -25,12 +25,12 @@ public class EjbTimerSessionBean implements EjbTimerSessionBeanRemote, EjbTimerS
     // Add business logic below. (Right-click in editor and choose
     // "Insert Code > Add Business Method")
     
-    @Schedule(hour = "*", minute = "*/1", info = "auctionListingEndDateCheckTimer")
+    @Schedule(hour = "*", minute = "*/1", info = "auctionListingEndDateCheckTimer") //to print notification every minute
     public void auctionListingEndDateCheckTimer()
     {
         String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date());
         System.out.println("********** EjbTimerSession.auctionListingEndDateCheckTimer(): Timeout at " + timeStamp);
         
-        auctionListingEntityControllerLocal.checkAuctionListingEndDate();
+        auctionListingEntityControllerLocal.checkAuctionListingEndDate(); //check listing ending date and time, and show notification if listing has ended
     }
 }

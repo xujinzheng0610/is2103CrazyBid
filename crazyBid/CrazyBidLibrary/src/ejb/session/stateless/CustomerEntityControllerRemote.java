@@ -5,9 +5,11 @@
  */
 package ejb.session.stateless;
 
+import Entity.Bid;
 import Entity.Customer;
 import exception.CustomerNotFoundException;
 import exception.InvalidLoginCredentialException;
+import java.util.List;
 
 public interface CustomerEntityControllerRemote {
 
@@ -20,5 +22,7 @@ public interface CustomerEntityControllerRemote {
     public void updateCustomer(Customer customer);
     
     public Customer retrieveCustomerByEmail(String email) throws CustomerNotFoundException;
+    
+     public List<Bid> retrieveBids(Long id);
 
 }

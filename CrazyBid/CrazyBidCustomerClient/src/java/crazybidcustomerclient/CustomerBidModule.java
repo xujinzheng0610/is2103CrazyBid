@@ -14,10 +14,11 @@ import ejb.session.stateless.CustomerEntityControllerRemote;
 import exception.AuctionListingNotFoundException;
 import exception.BalanceNotEnoughException;
 import exception.CustomerNotFoundException;
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
-
 
 /**
  *
@@ -119,15 +120,16 @@ public class CustomerBidModule {
                 Date d = new Date();
                 if (a.getStartDate().compareTo(d) <= 0 && a.getEndDate().compareTo(d) >= 0) {
                     System.out.printf("%5s%20s%25s%25s%30s%30s\n", "Product ID", "Product Name", "Starting Price", "Current Price", "Current Leading Customer", "End time");
-                    String currentPrice = "";
+                    BigDecimal currentPrice;
                     String currentLeadingBid = "Pending";
                     List<Bid> bidList = a.getBidList();
                     if (bidList.isEmpty()) {
-                        currentPrice = a.getStartingPrice().toString();
+                        currentPrice = a.getStartingPrice();
                     } else {
-                        currentPrice = bidList.get(bidList.size() - 1).getBidAmount().toString();
+                        currentPrice = bidList.get(bidList.size() - 1).getBidAmount();
                         currentLeadingBid = bidList.get(bidList.size() - 1).getCustomer().getUserName();
                     }
+
                     System.out.printf("%5s%20s%25s%25s%25s%50s\n", a.getId(), a.getProduct(), a.getStartingPrice().toString(),
                             currentPrice, currentLeadingBid, a.getEndDate());
 
@@ -173,7 +175,7 @@ public class CustomerBidModule {
         }
     }
 
-    public void doBrowseWonAuctionListing() {
+    public void doBrowseWonAuctionListing() { //to display all the listings won by the customer
         Scanner scanner = new Scanner(System.in);
 
         System.out.println("*** CrazyBid :: Customer Bid System :: Browse Won Auction Listing ***\n");
@@ -194,12 +196,12 @@ public class CustomerBidModule {
                 Bid b = bidList.get(bidList.size() - 1);
                 wonPrice = b.getBidAmount().toString();
                 System.out.printf("%5s%20s%25s%80s\n", a.getId(), a.getProduct(), wonPrice, address);
-                System.out.println("------------------------------------------------------------------------------------------------------------------------------------");
-
             }
         } catch (CustomerNotFoundException ex) {
             System.out.println("Error occurs with Info: " + ex.getMessage() + " !");
         }
+
+        System.out.println("------------------------------------------------------------------------------------------------------------------------------------");
         Integer response = 0;
         while (response < 1 || response > 2) {
             System.out.println("1: Select Delivery Address For Won Auction Listing");
@@ -216,8 +218,9 @@ public class CustomerBidModule {
         }
     }
 
-    public void doRefreshAuctionListingBids(AuctionListing a) {
+    public void doRefreshAuctionListingBids(AuctionListing a) { 
         //similar to view auction listing details
+        //to refresh the list
         Scanner scanner = new Scanner(System.in);
         Integer response = 0;
         try {
@@ -276,29 +279,31 @@ public class CustomerBidModule {
     }
 
     public void doSelectAddressForWonAuctionListing() {
+        //To select one of the addresses of the customer for his/her won bidding
         Scanner scanner = new Scanner(System.in);
 
         System.out.println("*** CrazyBid :: Customer Bid System :: Browse Won Auction Listing :: Select Address For Won Auction Listing ***\n");
         try {
             currentCustomer = customerEntityControllerRemote.retrieveCustomerByUsername(currentCustomer.getUserName());
-            System.out.print("Plese key in the id of auction listing> ");
+            System.out.print("Plese key in the ID of the auction listing> ");
             Long id = scanner.nextLong();
             try {
                 AuctionListing auctionListing = auctionListingEntityControllerRemote.retrieveAuctionListingById(id);
                 if (auctionListing.getAddress() != null) {
-                    System.out.println("You have assign address for this auction listing already!");
+                    System.out.println("You have assigned an address for this auction listing already!");
                 } else {
-                    List<Address> aList = currentCustomer.getAddressList();
-                    System.out.println("available addresses:");
-                    System.out.println("________________________________________________________");
-                    System.out.printf("%5s%20s%20s%40s%10s%20s\n", "Address ID", "Counrty", "City", "Street", "Postal Code", "Phone Number");
+                    Customer c = currentCustomer;
+                    List<Address> aList = c.getAddressList();
+                    System.out.println("Available addresses:");
+                    System.out.println("--------------------------------------------------------------------------------------------------\n");
+                    System.out.printf("%5s%20s%20s%40s%10s%20s\n", "Address ID", "Country", "City", "Street", "Postal Code", "Phone Number");
                     for (Address a : aList) {
                         if (a.getStatus()) {
                             System.out.printf("%5s%20s%20s%40s%10s%20s\n", a.getId(), a.getCountry(), a.getCity(), a.getStreetAddress(), a.getPostalCode(), a.getPhoneNumber());
                         }
                     }
                     while (true) {
-                        System.out.print("\n Please key in address id> ");
+                        System.out.print("\n Please key in the address ID> ");
                         Long aId = scanner.nextLong();
                         Address address = new Address();
                         for (Address a : aList) {
@@ -309,12 +314,12 @@ public class CustomerBidModule {
                         if (address != null && address.getStatus()) {
                             auctionListing.setAddress(address);
                             auctionListing = auctionListingEntityControllerRemote.doUpdateAuctionListing(auctionListing);
-                            System.out.println("You have succussfully assign address with id: " + auctionListing.getAddress().getId() + " for this auction listing");
+                            System.out.println("You have successfully assigned address with ID: " + auctionListing.getAddress().getId() + " for this auction listing!");
                             break;
                         } else {
-                            System.out.println("The address id is invalid!");
+                            System.out.println("The address ID is invalid!");
                             Integer response = 0;
-                            System.out.println("Key in 1 to quit this action.");
+                            System.out.println("Key in 1 to quit this action");
                             System.out.println("Key in any other number to continue");
                             response = scanner.nextInt();
                             if (response == 1) {

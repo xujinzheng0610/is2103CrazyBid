@@ -29,7 +29,7 @@ public class CreditPackage implements Serializable {
     private Long id;
     @Column(length = 32, nullable = false)
     private String packageName;
-    @Column(nullable = false, unique = true, scale = 4)
+    @Column(nullable = false, unique = true, columnDefinition = "DECIMAL(18,4)")
     private BigDecimal amount;
     @Column(nullable = false)
     private int soldAmount;

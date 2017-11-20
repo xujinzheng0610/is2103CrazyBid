@@ -75,6 +75,7 @@ public class CustomerProfileModule {
     }
 
     private void doViewCustomerProfile() {
+        //View the details of the customer profile
         Scanner scanner = new Scanner(System.in);
         Integer response = 0;
 
@@ -111,6 +112,7 @@ public class CustomerProfileModule {
     }
 
     public void doUpdateProfile(Customer customer) {
+        //To update the customer's profile
         Scanner scanner = new Scanner(System.in);
         String input;
 

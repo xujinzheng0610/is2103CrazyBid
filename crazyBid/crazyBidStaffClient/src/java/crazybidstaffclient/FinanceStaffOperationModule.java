@@ -49,7 +49,7 @@ public class FinanceStaffOperationModule {
 //            System.out.println("3: Update Credit Package");
 //            System.out.println("4: Delete Credit Package");
             System.out.println("3: View All Credit Packages");
-            System.out.println("-----------------------");
+            System.out.println("---------------------------------");
             System.out.println("4: Back\n");
             response = 0;
 
@@ -89,6 +89,7 @@ public class FinanceStaffOperationModule {
             scanner.nextLine();
             try {
                 creditPackageEntityControllerRemote.retrievePackageByAmount(amount);
+                //validate if package with the same amount has been created
                 System.out.println("This Package has been created. Please Try again! ");
                 System.out.println("1: continue ");
                 System.out.println("2: break ");
@@ -114,7 +115,7 @@ public class FinanceStaffOperationModule {
         }
     }
 
-    public void viewCreditPackageDetails() {
+    public void viewCreditPackageDetails() { //view details of the credit package
         Scanner scanner = new Scanner(System.in);
         Integer response = 0;
 
@@ -124,9 +125,9 @@ public class FinanceStaffOperationModule {
 
         try {
             CreditPackage c = creditPackageEntityControllerRemote.retrievePackageByAmount(amount);
-            System.out.printf("%10s%20s%10s%10s%10s\n", "Package ID", "Package Name", "Package amount", "Package sold", "Status");
-            System.out.printf("%10s%20s%10s%10s%10s\n", c.getId(), c.getPackageName(), c.getAmount().toString(), c.getSoldAmount(), c.getStatus().toString());
-            System.out.println("------------------------");
+            System.out.printf("%10s%20s%25s%25s%16s\n", "Package ID", "Package Name", "Package amount", "Package sold", "Status");
+            System.out.printf("%5s%25s%20s%25s%20s\n", c.getId(), c.getPackageName(), c.getAmount().toString(), c.getSoldAmount(), c.getStatus().toString());
+            System.out.println("---------------------------------------------------------------------------------------------------\n");
             System.out.println("1: Update Credt Package");
             System.out.println("2: Delete Credit Package");
             System.out.println("3: Back\n");
@@ -152,20 +153,22 @@ public class FinanceStaffOperationModule {
     public void viewAllCreditPackages() {
         Scanner scanner = new Scanner(System.in);
 
-        System.out.println("*** Crazy Bid :: System Finance :: View All Credit Packages ***\n");
+        System.out.println("*** Crazy Bid :: Finance System  :: View All Credit Packages ***\n");
 
         List<CreditPackage> cList = creditPackageEntityControllerRemote.retrieveAllCreditPackages();
-        System.out.printf("%10s%20s%10s%10s%10s\n", "Package ID", "Package Name", "Package amount", "Package sold", "Status");
+        System.out.printf("%10s%20s%25s%25s%16s\n", "Package ID", "Package Name", "Package Amount", "Package Sold", "Status");
 
         for (CreditPackage c : cList) {
-            System.out.printf("%10s%20s%10s%10s%10s\n", c.getId(), c.getPackageName(), c.getAmount().toString(), c.getSoldAmount(), c.getStatus().toString());
+            System.out.printf("%5s%25s%20s%25s%20s\n", c.getId(), c.getPackageName(), c.getAmount().toString(), c.getSoldAmount(), c.getStatus().toString());
         }
+
+        System.out.println("---------------------------------------------------------------------------------------------------\n");
         System.out.print("Press any key to continue...> ");
         scanner.nextLine();
 
     }
 
-    public void doUpdateCreditPackage(CreditPackage c) {
+    public void doUpdateCreditPackage(CreditPackage c) { //update credit package details
         Scanner scanner = new Scanner(System.in);
         String input;
 
@@ -198,7 +201,7 @@ public class FinanceStaffOperationModule {
     public void doDeleteCreditPackage(CreditPackage c) {
         Scanner scanner = new Scanner(System.in);
 
-        if (c.getSoldAmount() > 0) {
+        if (c.getSoldAmount() > 0) { //if customers have purchased this package, staff will not be able to delete package but only DISABLE
             System.out.println("This credit package has been purchased and therefore cannot be deleted!\n");
         } else {
             String input;
@@ -206,7 +209,7 @@ public class FinanceStaffOperationModule {
             System.out.printf("Confirm Delete Package %s (Package ID: %s) (Enter 'Y' to Delete)> ", c.getPackageName(), c.getAmount().toString());
             input = scanner.nextLine().trim();
 
-            if (input.equals("Y")) {
+            if (input.equals("Y") || input.equals("y")) {
                 c.setStatus(false);
                 creditPackageEntityControllerRemote.updateCreditPackage(c);
                 System.out.println("Credit package has been disabled successfully!\n");

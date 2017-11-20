@@ -32,7 +32,7 @@ public class Bid implements Serializable {
     @Temporal (TemporalType.TIMESTAMP)
     private Date bidTime;
     
-    @Column(nullable = false, scale = 4)
+    @Column(nullable = false, columnDefinition = "DECIMAL(18,4)")
     private BigDecimal bidAmount;
     
     @ManyToOne(cascade = {CascadeType.ALL}) 

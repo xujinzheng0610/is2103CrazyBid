@@ -5,7 +5,9 @@
  */
 package ejb.session.stateless;
 
+import Entity.Address;
 import Entity.AuctionListing;
+import Entity.Bid;
 import Entity.Customer;
 import exception.CustomerNotFoundException;
 import exception.InvalidLoginCredentialException;
@@ -33,7 +35,7 @@ public class CustomerEntityController implements CustomerEntityControllerRemote,
     private EntityManager em;
 
     @Override
-    public Customer persistNewCustomer(Customer c) {
+    public Customer persistNewCustomer(Customer c) { // persist new cusstomer
 
         em.persist(c);
         em.flush();
@@ -43,7 +45,7 @@ public class CustomerEntityController implements CustomerEntityControllerRemote,
     }
 
     @Override
-    public Customer retrieveCustomerByUsername(String username) throws CustomerNotFoundException {
+    public Customer retrieveCustomerByUsername(String username) throws CustomerNotFoundException { //retrive by username
 
         Query query = em.createQuery("SELECT s FROM Customer s WHERE s.userName = :inUsername");
         query.setParameter("inUsername", username);
@@ -54,6 +56,10 @@ public class CustomerEntityController implements CustomerEntityControllerRemote,
             for (AuctionListing a : aList) {
                 a.getAddress();
                 a.getBidList();
+                
+            }
+            for(Address a: c.getAddressList()){
+                a.getCountry();
             }
             return c;
         } catch (NoResultException | NonUniqueResultException ex) {
@@ -62,7 +68,7 @@ public class CustomerEntityController implements CustomerEntityControllerRemote,
     }
 
     @Override
-    public Customer retrieveCustomerByEmail(String email) throws CustomerNotFoundException {
+    public Customer retrieveCustomerByEmail(String email) throws CustomerNotFoundException {//retrieve by email
 
         Query query = em.createQuery("SELECT s FROM Customer s WHERE s.email = :inEmail");
         query.setParameter("inEmail", email);
@@ -81,7 +87,7 @@ public class CustomerEntityController implements CustomerEntityControllerRemote,
     }
 
     @Override
-    public Customer customerLogin(String username, String password) throws InvalidLoginCredentialException {
+    public Customer customerLogin(String username, String password) throws InvalidLoginCredentialException { //to log in
         try {
             Customer c = retrieveCustomerByUsername(username);
             if (c.getPassword().equals(password)) {
@@ -95,8 +101,21 @@ public class CustomerEntityController implements CustomerEntityControllerRemote,
     }
 
     @Override
-    public void updateCustomer(Customer customer) {
+    public void updateCustomer(Customer customer) {//to update customer
         em.merge(customer);
+    }
+
+    @Override
+    public List<Bid> retrieveBids(Long id) { // to retrive Bids completed by the customer
+        Customer c = em.find(Customer.class, id);
+
+        List<Bid> bList = c.getBidList();
+        for (Bid b : bList) {
+            b.getAuctionListing().getProduct();
+
+        }
+        return bList;
+
     }
 
 }

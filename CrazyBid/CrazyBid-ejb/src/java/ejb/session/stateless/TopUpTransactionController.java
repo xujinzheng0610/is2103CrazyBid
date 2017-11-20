@@ -33,7 +33,7 @@ public class TopUpTransactionController implements TopUpTransactionControllerRem
     private EntityManager em;
 
     @Override
-    public List<TopUpTransaction> retrieveAllTransactions(Long cId) throws CustomerNotFoundException {
+    public List<TopUpTransaction> retrieveAllTransactions(Long cId) throws CustomerNotFoundException { //retrieve transactions by ID
         Customer c = em.find(Customer.class, cId);
         if (c != null) {
             List<TopUpTransaction> tList = c.getTopUpList();
@@ -49,7 +49,7 @@ public class TopUpTransactionController implements TopUpTransactionControllerRem
     }
 
     @Override
-    public TopUpTransaction addNewTransaction(Long cId, Long pId) throws CustomerNotFoundException, PackageNotFoundException {
+    public TopUpTransaction addNewTransaction(Long cId, Long pId) throws CustomerNotFoundException, PackageNotFoundException { //to persist new Top up transaction
         Customer c = em.find(Customer.class, cId);
         CreditPackage p = em.find(CreditPackage.class, pId);
 

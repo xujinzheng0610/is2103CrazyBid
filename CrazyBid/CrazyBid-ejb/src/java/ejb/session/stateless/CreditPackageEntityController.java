@@ -33,7 +33,7 @@ public class CreditPackageEntityController implements CreditPackageEntityControl
     // Add business logic below. (Right-click in editor and choose
     // "Insert Code > Add Business Method")
     @Override
-    public CreditPackage retrievePackageByAmount(BigDecimal amount) throws PackageNotFoundException {
+    public CreditPackage retrievePackageByAmount(BigDecimal amount) throws PackageNotFoundException { //retrieve by package amount
         Query query = em.createQuery("SELECT c FROM CreditPackage c WHERE c.amount = :inAmount");
         query.setParameter("inAmount", amount);
 
@@ -45,7 +45,7 @@ public class CreditPackageEntityController implements CreditPackageEntityControl
     }
 
     @Override
-    public CreditPackage retrieveCreditPackageById(Long id) throws PackageNotFoundException {
+    public CreditPackage retrieveCreditPackageById(Long id) throws PackageNotFoundException { //retrive by ID
         CreditPackage c = em.find(CreditPackage.class, id);
 
         if (c != null) {
@@ -56,7 +56,7 @@ public class CreditPackageEntityController implements CreditPackageEntityControl
     }
 
     @Override
-    public CreditPackage persistNewCreditPackage(CreditPackage c) {
+    public CreditPackage persistNewCreditPackage(CreditPackage c) { //persist new package
         em.persist(c);
         em.flush();
         em.refresh(c);
@@ -64,13 +64,13 @@ public class CreditPackageEntityController implements CreditPackageEntityControl
     }
 
     @Override
-    public List<CreditPackage> retrieveAllCreditPackages() {
+    public List<CreditPackage> retrieveAllCreditPackages() { //retrieve all packages
         Query query = em.createQuery("SELECT c FROM CreditPackage c");
         return query.getResultList();
     }
 
     @Override
-    public void deleteCreditPackage(Long id) throws PackageNotFoundException {
+    public void deleteCreditPackage(Long id) throws PackageNotFoundException { // delete package
         CreditPackage c = retrieveCreditPackageById(id);
         if (c != null) {
             em.remove(c);
@@ -80,7 +80,7 @@ public class CreditPackageEntityController implements CreditPackageEntityControl
     }
     
     @Override
-    public void updateCreditPackage(CreditPackage c){
+    public void updateCreditPackage(CreditPackage c){ //update package
         em.merge(c);
     }
 }

@@ -5,6 +5,7 @@
  */
 package crazybidcustomerclient;
 
+import Entity.Bid;
 import Entity.CreditPackage;
 import Entity.Customer;
 import Entity.TopUpTransaction;
@@ -83,15 +84,28 @@ public class CustomerCreditModule {
         }
     }
 
-    public void doViewTransactionHistory() {
+    public void doViewTransactionHistory() {//to display bidding and top up transactions
         Scanner scanner = new Scanner(System.in);
 
         System.out.println("*** Crazy Bid :: View Transaction History ***\n");
-        try {
+        try {//top up transactions
             List<TopUpTransaction> tList = topUpTransactionControllerRemote.retrieveAllTransactions(currentCustomer.getCustomerId());
+            System.out.println("*** Top Up Transaction History *** ");
             System.out.printf("%8s%47s%10s\n", "Date", "Package Name", "Amount");
             for (TopUpTransaction t : tList) {
                 System.out.printf("%8s%25s%10s\n", t.getCreatedOn(), t.getCreditPackage().getPackageName(), t.getCreditPackage().getAmount().toString());
+            }
+
+            System.out.println("");
+
+            //Bidding transactions
+            
+            System.out.println("*** Bidding Transaction History *** ");
+
+            System.out.printf("%8s%36s%15s\n", "Date", "Product", "Amount");
+            List<Bid> bList = customerEntityControllerRemote.retrieveBids(currentCustomer.getCustomerId());
+            for (Bid b : bList) {
+                System.out.printf("%8s%17s%10s\n", b.getBidTime(), b.getAuctionListing().getProduct(), b.getBidAmount());
             }
             System.out.println("-----------------------------------------------------------------------------------------------------------------------------------------------");
             System.out.print("Press any key to continue...> ");
@@ -101,7 +115,7 @@ public class CustomerCreditModule {
         }
     }
 
-    public void doPurchaseCredit() {
+    public void doPurchaseCredit() { //purchase credits
         Scanner scanner = new Scanner(System.in);
 
         //display and choose credit package

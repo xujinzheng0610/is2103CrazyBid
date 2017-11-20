@@ -58,6 +58,7 @@ public class DataInitializationSessionBean {
     }
     
     private void initializeData(){
+        //initialize default staff and customer
         staffEntityControllerLocal.persistNewStaff(new Staff("eric","xu","manager","password",StaffAccessRight.ADMIN));
         Customer c = new Customer("system","system","systemCustomer","password","12345678","crazyBid@gmail.com",BigDecimal.ZERO,false,
                 new ArrayList<>(),new ArrayList<>(),new ArrayList<>(),new ArrayList<>());

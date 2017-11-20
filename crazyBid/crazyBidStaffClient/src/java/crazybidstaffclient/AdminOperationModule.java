@@ -81,7 +81,7 @@ public class AdminOperationModule {
         while (true) {
             System.out.print("Enter Username> ");
             String username = scanner.nextLine().trim();
-            while (username.length() == 0) {
+            while (username.length() == 0) { //validate empty input
                 System.out.println("Please enter a username!");
                 System.out.print("Enter Username> ");
                 username = scanner.nextLine().trim();
@@ -129,7 +129,7 @@ public class AdminOperationModule {
         }
     }
 
-    public void viewStaffDetails() {
+    public void viewStaffDetails() { //to view details of staff
         Scanner scanner = new Scanner(System.in);
         Integer response = 0;
 
@@ -164,7 +164,7 @@ public class AdminOperationModule {
         }
     }
 
-    public void viewAllStaffs() {
+    public void viewAllStaffs() { //to view all details of all staff
         Scanner scanner = new Scanner(System.in);
 
         System.out.println("*** Crazy Bid :: Administrator System :: View All Staffs ***\n");
@@ -181,7 +181,7 @@ public class AdminOperationModule {
         scanner.nextLine();
     }
 
-    public void doUpdateStaff(Staff s) {
+    public void doUpdateStaff(Staff s) { //to update staff details
         Scanner scanner = new Scanner(System.in);
         String input;
 
@@ -230,7 +230,7 @@ public class AdminOperationModule {
         System.out.println("Staff updated successfully!\n");
     }
 
-    public void doDeleteStaff(Staff s) {
+    public void doDeleteStaff(Staff s) { //to delete staff
         Scanner scanner = new Scanner(System.in);
         String input;
 

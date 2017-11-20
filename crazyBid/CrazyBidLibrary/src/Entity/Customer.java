@@ -39,7 +39,7 @@ public class Customer implements Serializable {
     private String phoneNumber;
     @Column(length = 32, nullable = false, unique = true)
     private String email;
-    @Column(nullable = false, scale = 4)
+    @Column(nullable = false, columnDefinition = "DECIMAL(18,4)")
     private BigDecimal creditBalance;
     @Column(nullable = false)
     private Boolean premium;

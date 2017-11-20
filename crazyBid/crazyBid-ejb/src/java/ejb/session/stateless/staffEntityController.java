@@ -32,7 +32,7 @@ public class StaffEntityController implements StaffEntityControllerRemote, Staff
     // Add business logic below. (Right-click in editor and choose
     // "Insert Code > Add Business Method")
     @Override
-    public Staff persistNewStaff(Staff s) {
+    public Staff persistNewStaff(Staff s) { 
         em.persist(s);
         em.flush();
         em.refresh(s);
@@ -41,7 +41,7 @@ public class StaffEntityController implements StaffEntityControllerRemote, Staff
     }
 
     @Override
-    public Staff retrieveStaffByUsername(String username) throws StaffNotFoundException {
+    public Staff retrieveStaffByUsername(String username) throws StaffNotFoundException { //retrieve by username
 
         Query query = em.createQuery("SELECT s FROM Staff s WHERE s.userName = :inUsername");
         query.setParameter("inUsername", username);
@@ -54,7 +54,7 @@ public class StaffEntityController implements StaffEntityControllerRemote, Staff
     }
 
     @Override
-    public Staff retrieveStaffByStaffId(Long id) throws StaffNotFoundException {
+    public Staff retrieveStaffByStaffId(Long id) throws StaffNotFoundException { //retrieve by ID
         Staff s = em.find(Staff.class, id);
 
         if (s != null) {
@@ -65,13 +65,13 @@ public class StaffEntityController implements StaffEntityControllerRemote, Staff
     }
 
     @Override
-    public List<Staff> retrieveAllStaffs(){
+    public List<Staff> retrieveAllStaffs(){ //retrieve every staff
         Query query = em.createQuery("SELECT s FROM Staff s");
         return query.getResultList();
     }
     
     @Override
-    public Staff staffLogin(String username, String password) throws InvalidLoginCredentialException {
+    public Staff staffLogin(String username, String password) throws InvalidLoginCredentialException { //to log in
         try {
             Staff s = retrieveStaffByUsername(username);
             if (s.getPassword().equals(password)) {
@@ -85,12 +85,12 @@ public class StaffEntityController implements StaffEntityControllerRemote, Staff
     }
 
     @Override
-    public void updateStaff(Staff s) {
+    public void updateStaff(Staff s) { //update staff 
         em.merge(s);
     }
 
     @Override
-    public void deleteStaff(Long id) throws StaffNotFoundException {
+    public void deleteStaff(Long id) throws StaffNotFoundException { //to delete staff
         Staff sToRemove = retrieveStaffByStaffId(id);
         if (sToRemove != null) {
             em.remove(sToRemove);
@@ -98,18 +98,7 @@ public class StaffEntityController implements StaffEntityControllerRemote, Staff
             throw new StaffNotFoundException("Staff ID " + id + " does not exist!");
         }
         
-        //        Query query = entityManager.createQuery("SELECT t FROM SaleTransactionEntity t");
-//        List<SaleTransactionEntity> temp = query.getResultList();
-//
-//        System.err.println("*****************ＤＩＳＡＳＳＯＣＩＡＴＩＮＧ");
-//        for (SaleTransactionEntity a : temp) {
-//            if (a.getStaffEntity().getStaffId().equals(staffId)) {
-//                System.err.println("********* disassociated: " + a.getSaleTransactionId());
-//                a.setStaffEntity(null);
-//            }
-//        }
         
-
     }
 
 

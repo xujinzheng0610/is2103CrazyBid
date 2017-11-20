@@ -94,16 +94,19 @@ public class MainApp {
         String username = "";
         String password = "";
 
-        System.out.println("*** CrazyBiz :: Login ***\n");
+        System.out.println("*** CrazyBid :: Login ***\n");
         System.out.print("Enter username> ");
         username = scanner.nextLine().trim();
         while (username.length() == 0) {
+            //to validate empty input
             System.out.println("Please enter your username!");
             System.out.print("Enter username> ");
             username = scanner.nextLine().trim();
         }
+        
         System.out.print("Enter password> ");
-        while (password.length() == 0) {
+        password = scanner.nextLine().trim();
+        while (password.length() == 0) { //to validate empty input
             System.out.println("Please enter your password");
             System.out.print("Enter password> ");
             password = scanner.nextLine().trim();
@@ -139,7 +142,7 @@ public class MainApp {
         while (true) {
             System.out.print("Enter Username> ");
             input = scanner.nextLine().trim();
-            if (input.length() == 0) {
+            if (input.length() == 0) { //to validate empty input
                 System.out.println("Please enter a username!");
             } else {
                 try {
@@ -155,7 +158,7 @@ public class MainApp {
         System.out.print("Enter Password> ");
         input = scanner.nextLine().trim();
 
-        while (input.length() == 0) {
+        while (input.length() == 0) { //to validate empty input
             System.out.println("Please enter a password!");
             System.out.print("Enter Password> ");
             input = scanner.nextLine().trim();
@@ -183,11 +186,12 @@ public class MainApp {
         input = scanner.nextLine().trim();
         newCustomer.setPhoneNumber(input);
 
-        BigDecimal balance = new BigDecimal("0.0000");
+        BigDecimal balance = new BigDecimal("0.0000"); 
         newCustomer.setCreditBalance(balance);
 
         newCustomer.setPremium(false);
 
+      
         List<Address> addressList = new ArrayList<>();
         List<Bid> bidList = new ArrayList<>();
         List<AuctionListing> productList = new ArrayList<>();
